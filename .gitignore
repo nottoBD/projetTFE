@@ -1,0 +1,15 @@
+# Exclut environnements virtuels (venv, env), fichiers Python compilés (__pycache__, *.pyc), 
+# dossiers static/media, fichiers environnement,
+# logs/temporaires (*.log, *.tmp), configurations IDE.
+
+venv/
+env/
+__pycache__/
+*.pyc
+static/
+media/
+.env*
+.idea/
+.vscode/
+*.{log,tmp,temp}
+
