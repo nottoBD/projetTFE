@@ -1,0 +1,66 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "parent1",
+      "password": "secret",
+      "email": "parent1@example.com"
+    }
+  },
+  {
+    "model": "core.profile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "nom": "Martin",
+      "prenom": "Alexandre",
+      "numero_national": "12345678901",
+      "adresse_postale": "50 Avenue de la République",
+      "code_postal": "75011",
+      "commune": "Paris",
+      "pays": "France",
+      "telephone": "+33123456789"
+    }
+  },
+  {
+    "model": "core.enfant",
+    "pk": 1,
+    "fields": {
+      "nom": "Martin",
+      "prenom": "Lucie",
+      "date_naissance": "2012-06-15",
+      "parents": [1]
+    }
+  },
+  {
+    "model": "core.fraisextraordinaire",
+    "pk": 1,
+    "fields": {
+      "categorie": "medical",
+      "montant": "120.00",
+      "description": "Consultation ophtalmologie",
+      "date": "2023-02-15",
+      "enfant": 1
+    }
+  },
+  {
+    "model": "core.indicesante",
+    "pk": 1,
+    "fields": {
+      "date": "2023-01-01",
+      "valeur": "102.5"
+    }
+  },
+  {
+    "model": "core.correspondance",
+    "pk": 1,
+    "fields": {
+      "sujet": "Remboursement frais médicaux Lucie",
+      "message": "Bonjour, je vous envoie les frais de consultation pour Lucie à rembourser. Merci.",
+      "date_envoi": "2023-02-16T10:00:00Z",
+      "parent_emetteur": 1,
+      "parent_recepteur": 1
+    }
+  }
+]
