@@ -57,8 +57,12 @@ python manage.py migrate
 ```
 python manage.py loaddata core/fixtures/fixtures.json
 ```
+### Créer un super user (accès localhost:8000/admin)
+```
+python manage.py createsuperuser
+```
 ## Lancer "Hello World!"
-Dossier racine, dans l'environnement virtuel
+Dossier racine, dans l'environnement virtuel, quand pgSQL et pip sont prets
 ```
 python manage.py runserver
 ```
