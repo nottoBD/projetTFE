@@ -27,7 +27,7 @@ repo, ouvrir le dossier racine, CMD admin
 ```
 python -m venv env
 
-.\venv\Scripts\activate
+.\env\Scripts\activate
 
 pip install --upgrade pip
 
@@ -40,11 +40,11 @@ dans le dossier racine doit etre écrit le fichier .env comme ceci
 SECRET_KEY='gvfdu$XXXXXXXXXXXXXXXXXXXXXXX'
 DEBUG=True
 ```
-la clée est retirée du versioning de settings.py
-le module django-environ appel .env dans settings.py
+la clé est retirée du versioning de settings.py
+le module django-environ appel .env dedans
 
 ## Django
-### Se placer dans la branche dev au préalable pour avoir accès au Hello World!
+### Se placer dans la branche dev au préalable pour avoir accès au "Hello World!"
 ```
 git checkout dev 
 ```
