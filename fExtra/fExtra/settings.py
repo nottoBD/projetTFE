@@ -11,31 +11,16 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import environ  # permet de stocker la clé cryptographique à l'abri
+import environ  # .env
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: secret + debug mode = variable d'environnement django-environ .env
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
-
-root_dir = BASE_DIR.parent
-env_file = root_dir / ".env"
-environ.Env.read_env(env_file=str(env_file))
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: no DEBUG in production. Key stored locally .env
 SECRET_KEY = env("SECRET_KEY")
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
-
 
 ALLOWED_HOSTS = []
 
@@ -49,6 +34,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "core",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -87,8 +74,12 @@ WSGI_APPLICATION = "fExtra.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "dbtest",
+        "USER": "usertest",
+        "PASSWORD": "usertest",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
