@@ -9,18 +9,19 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
-import environ  # .env
+import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
-SECRET_KEY = env("SECRET_KEY")
-DEBUG = env.bool("DEBUG", default=False)
+# SECRET_KEY = env("SECRET_KEY")
+
+DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = []
 
@@ -34,9 +35,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core",
+    "accounts",
     "rest_framework",
 ]
+
+AUTH_USER_MODEL = "accounts.Utilisateur"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -53,7 +56,7 @@ ROOT_URLCONF = "fExtra.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
