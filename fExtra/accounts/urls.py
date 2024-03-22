@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('register/', views.requete_inscription, name='s\'inscrire'),
-    # TODO: chemins connexion,déconnexion
+    path('inscription/', views.inscription, name='inscription'),
+    path('connexion/', views.connexion, name='connexion'),
+    path('connexion/magistrat/', views.connexion_magistrat, name='connexion_magistrat'),
+    path('deconnexion/', views.deconnexion, name='deconnexion'),
+    path('home/', views.home, name='home'),
 ]

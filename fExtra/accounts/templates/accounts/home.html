@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if user.is_authenticated %}
+    {% if user.est_parent %}
+    <p>Vous êtes connecté en tant que {{ user.profile_parent.prenom }} {{ user.profile_parent.nom }}.</p>
+    {% elif user.est_magistrat %}
+    <p>Vous êtes connecté en tant que {{ user.email }}.</p>
+    {% endif %}
+    <!--<a class="btn btn-primary" href="{% url 'deconnexion' %}">Déconnexion</a>-->
+    {% else %}
+    <h2>Bienvenue sur fExtra</h2>
+    <p>Plateforme de gestion des frais extraordinaires.</p>
+    <div>
+        <a class="btn btn-primary" href="{% url 'inscription' %}">S'inscrire</a>
+        <a class="btn btn-secondary" href="{% url 'connexion' %}">Connexion</a>
+        <a class="btn btn-info" href="{% url 'connexion_magistrat' %}">Magistrat ?</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

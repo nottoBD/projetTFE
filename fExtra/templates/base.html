@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>fExtra</title>
 </head>
 <body>
-{% block content %}
-<!-- contenu specifique aux page ici -->
-{% endblock %}
+<header>
+    <nav>
+        <a href="{% url 'home' %}">Home</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'deconnexion' %}">Déconnexion</a>
+        {% else %}
+        <a href="{% url 'inscription' %}">Inscription</a>
+        <a href="{% url 'connexion' %}">Connexion</a>
+        {% endif %}
+    </nav>
+</header>
+<main>
+    {% block content %}{% endblock %}
+</main>
 </body>
 </html>
