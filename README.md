@@ -66,3 +66,11 @@ Dossier racine, dans l'environnement virtuel, quand pgSQL et pip sont prets
 ```
 python manage.py runserver
 ```
+
+
+# Mise en production
+
+#Identifiant
+```
+Hotmail/ Alwaysdata : neok_alwaysdata@hotmail.com / Neokalwaysdata
+```
