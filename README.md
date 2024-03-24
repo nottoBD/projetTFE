@@ -70,7 +70,8 @@ python manage.py runserver
 
 # Mise en production
 
-#Identifiant
+# Identifiant
+Hotmail/ Alwaysdata :
 ```
-Hotmail/ Alwaysdata : neok_alwaysdata@hotmail.com / Neokalwaysdata
+neok_alwaysdata@hotmail.com / Neokalwaysdata
 ```
