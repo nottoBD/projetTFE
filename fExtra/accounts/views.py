@@ -1,61 +1,91 @@
+from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from .forms import InscriptionParentForm, ProfileParentForm
-from django.contrib.auth.decorators import login_required
+from .forms import RegisterForm, MagistratRegistrationForm, ExpenseDocumentForm, ExpenseForm
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User, Group
+from .models import Profile, Expense, ExpenseDocument
+from django.utils.translation import gettext_lazy as _
 
+@login_required(login_url="/login")
 def home(request):
-    context = {}
-    if request.user.is_authenticated:
-        if request.user.est_parent:
-            context['message'] = f'Vous êtes connecté en tant que {request.user.profile_parent.prenom} {request.user.profile_parent.nom}'
-        elif request.user.est_magistrat:
-            context['message'] = f'Vous êtes connecté en tant que {request.user.email}'
-    return render(request, 'accounts/home.html', context)
-
-def inscription(request):
-    if request.method == 'POST':
-        user_form = InscriptionParentForm(request.POST)
-        profile_form = ProfileParentForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save(commit=False)
-            user.set_password(user_form.cleaned_data['password'])
-            user.est_parent = True
-            user.save()
-            profile = profile_form.save(commit=False)
-            profile.utilisateur = user
-            profile.email = user.email
-            profile.save()
-            return redirect('home')
+    if request.user.is_superuser:
+        expenses = Expense.objects.all()
     else:
-        user_form = InscriptionParentForm()
-        profile_form = ProfileParentForm()
-    return render(request, 'accounts/inscription.html', {'user_form': user_form, 'profile_form': profile_form})
+        expenses = Expense.objects.filter(author=request.user)
+    if request.method == "POST":
+        post_id = request.POST.get("post-id")
+        user_id = request.POST.get("user-id")
+        if post_id:
+            post = Expense.objects.filter(id=post_id).first()
+            if post and (post.author == request.user or request.user.has_perm("accounts.delete_post")):
+                post.delete()
+                return redirect('home')  # Redirection, évite double post
 
-def connexion(request):
+        elif user_id and request.user.is_superuser:
+            user = User.objects.filter(id=user_id).first()
+            if user:
+                if not user.is_superuser:
+                    try:
+                        group = Group.objects.get(name='default')
+                        group.user_set.remove(user)
+                    except Group.DoesNotExist:
+                        pass
+                    try:
+                        group = Group.objects.get(name='mod')
+                        group.user_set.remove(user)
+                    except Group.DoesNotExist:
+                        pass
+                return redirect('home')
+    return render(request, 'accounts/home.html', {"expenses": expenses})
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login')
+def register_magistrat(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            return render(request, 'accounts/connexion.html', {'error': 'Nom d’utilisateur ou mot de passe incorrect'})
-    return render(request, 'accounts/connexion.html')
+        form = MagistratRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            magistrat_group, _ = Group.objects.get_or_create(name='magistrat')
+            magistrat_group.user_set.add(user)
+            return redirect('/home')
+    else:
+        form = MagistratRegistrationForm()
+    return render(request, 'registration/sign_up_magistrat.html', {'form': form})
 
-@login_required
-def deconnexion(request):
-    logout(request)
-    return redirect('home')
-
-def connexion_magistrat(request):
+@login_required(login_url="/login")
+def create_expense(request):
+    ExpenseDocumentFormSet = inlineformset_factory(Expense, ExpenseDocument, form=ExpenseDocumentForm, extra=1)
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None and user.est_magistrat:
+        form = ExpenseForm(request.POST)
+        formset = ExpenseDocumentFormSet(request.POST, request.FILES)
+        if form.is_valid() and formset.is_valid():
+            expense = form.save(commit=False)
+            expense.author = request.user
+            expense.save()
+            formset.instance = expense
+            formset.save()
+            return redirect("/home")
+    else:
+        form = ExpenseForm()
+        formset = ExpenseDocumentFormSet()
+    return render(request, 'accounts/create_expense.html', {"form": form, "formset": formset})
+
+def sign_up(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Profile.objects.create(
+                user=user,
+                num_telephone=form.cleaned_data.get('num_telephone'),
+                num_national=form.cleaned_data.get('num_national'),
+                genre=form.cleaned_data.get('genre'),
+                address=form.cleaned_data.get('address')
+            )
+            parent_group, created = Group.objects.get_or_create(name='parent')
+            parent_group.user_set.add(user)
             login(request, user)
-            return redirect('home')
-        else:
-            return render(request, 'accounts/connexion.html', {'error': 'Accès refusé ou informations incorrectes'})
-    return render(request, 'accounts/connexion.html')
+            return redirect('/home')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/sign_up.html', {"form": form})
