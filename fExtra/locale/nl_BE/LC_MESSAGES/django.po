@@ -1,0 +1,297 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-25 15:10+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: accounts/context.py:8
+msgid "(administrator)"
+msgstr "(beheerder)"
+
+#: accounts/context.py:10
+msgid "(magistrat)"
+msgstr "(magistraat)"
+
+#: accounts/context.py:12
+msgid "(parent)"
+msgstr "(ouder)"
+
+#: accounts/forms.py:9 accounts/forms.py:30
+msgid "Telephone Number"
+msgstr "Telefoonnummer"
+
+#: accounts/forms.py:10
+msgid "National Number"
+msgstr "Nationaal Nummer"
+
+#: accounts/forms.py:12
+msgid "Male"
+msgstr "Man"
+
+#: accounts/forms.py:12
+msgid "Female"
+msgstr "Vrouw"
+
+#: accounts/forms.py:12
+msgid "Other"
+msgstr "Anders"
+
+#: accounts/forms.py:14
+msgid "Gender"
+msgstr "Geslacht"
+
+#: accounts/forms.py:16
+msgid "Address"
+msgstr "Adres"
+
+#: accounts/forms.py:22 accounts/forms.py:36
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+#: accounts/forms.py:23 accounts/forms.py:37
+msgid "Email"
+msgstr "E-mail"
+
+#: accounts/forms.py:24 accounts/forms.py:38
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: accounts/forms.py:25 accounts/forms.py:39
+msgid "Confirm Password"
+msgstr "Bevestig wachtwoord"
+
+#: accounts/forms.py:48 accounts/templates/accounts/home.html:10
+msgid "Category"
+msgstr "Categorie"
+
+#: accounts/forms.py:49
+msgid "Sub Category"
+msgstr "Subcategorie"
+
+#: accounts/forms.py:50 accounts/templates/accounts/home.html:15
+msgid "Cost"
+msgstr "Kosten"
+
+#: accounts/forms.py:51
+msgid "Date"
+msgstr "Datum"
+
+#: accounts/forms.py:52
+msgid "Commentary"
+msgstr "Commentaar"
+
+#: accounts/forms.py:61 accounts/templates/accounts/home.html:17
+msgid "Document"
+msgstr "Document"
+
+#: accounts/management/commands/populate_categories.py:9
+msgid ""
+"Prepopulates the database with predefined categories and sub-categories."
+msgstr "Vult de database vooraf in met vooraf gedefinieerde categorieën en subcategorieën."
+
+#: accounts/management/commands/populate_categories.py:14
+msgid "Medical and paramedical expenses"
+msgstr "Medische en paramedische kosten"
+
+#: accounts/management/commands/populate_categories.py:15
+msgid ""
+"Treatments by medical specialists and the medications, specialized "
+"examinations and care they prescribe"
+msgstr ""
+"Behandelingen door medische specialisten en de medicatie, gespecialiseerde "
+"onderzoeken en zorg die zij voorschrijven"
+
+#: accounts/management/commands/populate_categories.py:16
+msgid ""
+"Costs of surgical and hospitalization procedures and the specific treatments "
+"resulting therefrom"
+msgstr ""
+"Kosten van chirurgische en ziekenhuisprocedures en de specifieke behandelingen "
+"die daaruit voortvloeien"
+
+#: accounts/management/commands/populate_categories.py:17
+msgid ""
+"Medical and paramedical expenses and devices, including orthodontics, speech "
+"therapy, ophthalmology, etc."
+msgstr ""
+"Medische en paramedische kosten en apparaten, waaronder orthodontie, logopedie, "
+"oogheelkunde, etc."
+
+#: accounts/management/commands/populate_categories.py:18
+msgid ""
+"Annual premium for hospitalization insurance or other supplementary insurance"
+msgstr ""
+"Jaarlijkse premie voor ziekenhuisverzekering of andere aanvullende verzekering"
+
+#: accounts/management/commands/populate_categories.py:20
+msgid "Costs relating to school training"
+msgstr "Kosten met betrekking tot schoolopleiding"
+
+#: accounts/management/commands/populate_categories.py:21
+msgid ""
+"School activities of several days, like snow classes, sea classes, green "
+"classes"
+msgstr ""
+"Schoolactiviteiten van enkele dagen, zoals sneeuwklassen, zeeklassen, groene "
+"klassen"
+
+#: accounts/management/commands/populate_categories.py:22
+msgid "Necessary, specialized and costly school materials and/or clothing"
+msgstr ""
+"Noodzakelijke, gespecialiseerde en kostbare schoolmaterialen en/of kleding"
+
+#: accounts/management/commands/populate_categories.py:23
+msgid "Tuition fees and courses for higher education and special training"
+msgstr "Collegegeld en cursussen voor hoger onderwijs en speciale training"
+
+#: accounts/management/commands/populate_categories.py:24
+msgid "Purchase of computer hardware and printers with necessary software"
+msgstr ""
+"Aankoop van computerhardware en printers met de benodigde software"
+
+#: accounts/management/commands/populate_categories.py:25
+msgid "Private lessons for school year success"
+msgstr "Privélessen voor succesvol schooljaar"
+
+#: accounts/management/commands/populate_categories.py:26
+msgid "Cost of renting a student room"
+msgstr "Kosten voor het huren van een studentenkamer"
+
+#: accounts/management/commands/populate_categories.py:27
+msgid "Additional specific costs related to study abroad program"
+msgstr "Aanvullende specifieke kosten met betrekking tot het studeren in het buitenland"
+
+#: accounts/management/commands/populate_categories.py:29
+msgid ""
+"Expenses related to the development of the personality and development of "
+"the child"
+msgstr ""
+"Kosten gerelateerd aan de ontwikkeling van de persoonlijkheid en ontwikkeling "
+"van het kind"
+
+#: accounts/management/commands/populate_categories.py:30
+msgid "Child care expenses from 0 to 3 years included"
+msgstr ""
+"Kosten voor kinderopvang van 0 tot 3 jaar inbegrepen"
+
+#: accounts/management/commands/populate_categories.py:31
+msgid ""
+"Dues, basic supplies, and fees for camps and internships in cultural, "
+"sporting, or artistic activities"
+msgstr ""
+"Lidgeld, basisbenodigdheden en kosten voor kampen en stages in culturele, "
+"sportieve of artistieke activiteiten"
+
+#: accounts/management/commands/populate_categories.py:32
+msgid ""
+"Registration fee for driving courses and theoretical and practical "
+"examinations of the driving licence"
+msgstr ""
+"Inschrijvingsgeld voor rijcursussen en theoretische en praktische "
+"examens van het rijbewijs"
+
+#: accounts/templates/accounts/base.html:23
+msgid "Home"
+msgstr "Startpagina"
+
+#: accounts/templates/accounts/base.html:27
+msgid "Expense"
+msgstr "Uitgave"
+
+#: accounts/templates/accounts/base.html:32
+#: accounts/templates/registration/sign_up_magistrat.html:5
+#: accounts/templates/registration/sign_up_magistrat.html:11
+msgid "Register Magistrat"
+msgstr "Magistraat Registreren"
+
+#: accounts/templates/accounts/base.html:39
+msgid "Language"
+msgstr "Taal"
+
+#: accounts/templates/accounts/base.html:58
+msgid "Logged in as"
+msgstr "Ingelogd als"
+
+#: accounts/templates/accounts/base.html:62
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: accounts/templates/accounts/base.html:67
+#: accounts/templates/registration/login.html:4
+#: accounts/templates/registration/login.html:10
+msgid "Login"
+msgstr "Inloggen"
+
+#: accounts/templates/accounts/create_expense.html:4
+msgid "Add expense"
+msgstr "Voeg uitgave toe"
+
+#: accounts/templates/accounts/create_expense.html:15
+msgid "Save expense"
+msgstr "Uitgave opslaan"
+
+#: accounts/templates/accounts/home.html:4
+msgid "Home Page"
+msgstr "Startpagina"
+
+#: accounts/templates/accounts/home.html:16
+msgid "Comment"
+msgstr "Opmerking"
+
+#: accounts/templates/accounts/home.html:21
+msgid "Posted on"
+msgstr "Gepost op"
+
+#: accounts/templates/accounts/home.html:25
+msgid "No expenses recorded yet"
+msgstr "Nog geen uitgaven geregistreerd"
+
+#: accounts/templates/registration/login.html:9
+msgid "Don't have an account? Create one"
+msgstr "Heb je geen account? Maak er een aan"
+
+#: accounts/templates/registration/login.html:9
+#: accounts/templates/registration/sign_up.html:8
+msgid "Here"
+msgstr "Hier"
+
+#: accounts/templates/registration/sign_up.html:2
+msgid "Sign Up"
+msgstr "Registreren"
+
+#: accounts/templates/registration/sign_up.html:8
+msgid "Have an account? Login"
+msgstr "Heb je al een account? Log in"
+
+#: accounts/templates/registration/sign_up.html:9
+msgid "Register"
+msgstr "Registreren"
+
+#: fExtra/settings.py:61
+msgid "English"
+msgstr "Engels"
+
+#: fExtra/settings.py:62
+msgid "French"
+msgstr "Frans"
+
+#: fExtra/settings.py:63
+msgid "Dutch"
+msgstr "Nederlands"
+
+#: fExtra/settings.py:64
+msgid "German"
+msgstr "Duits"
