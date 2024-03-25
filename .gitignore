@@ -12,4 +12,3 @@ fExtra/.env
 .idea/
 .vscode/
 *.{log,tmp,temp}
-
