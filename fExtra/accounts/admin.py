@@ -24,7 +24,5 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    print("test")
-
 
 admin.site.register(CustomUser, CustomUserAdmin)
