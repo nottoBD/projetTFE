@@ -101,9 +101,9 @@ WSGI_APPLICATION = 'fExtra.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbtest',
-        'USER': 'usertest',
-        'PASSWORD': 'usertest',
+        'NAME': 'neokproject_dbtest',
+        'USER': 'neokproject',
+        'PASSWORD': 'Neokalwaysdata',
         'PORT': '5432'
     }
 }
