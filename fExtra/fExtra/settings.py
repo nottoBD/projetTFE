@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = 'gvfdu$XXXXXXXXXXXXXXXXXXXXXXX'
 
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
