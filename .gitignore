@@ -8,7 +8,7 @@ __pycache__/
 *.pyc
 static/
 media/
-fExtra/fExtra/.env
+fExtra/.env
 .idea/
 .vscode/
 *.{log,tmp,temp}

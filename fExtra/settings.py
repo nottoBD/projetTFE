@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'fExtra.accounts.apps.MainConfig',
+    'fExtra.accounts.apps.MainConfig',
     'crispy_forms',
     'crispy_bootstrap5',
 ]
@@ -76,7 +76,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-ROOT_URLCONF = 'fExtra.fExtra.urls'
+ROOT_URLCONF = 'fExtra.urls'
 
 TEMPLATES = [
     {
@@ -89,13 +89,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'fExtra.accounts.context.user_role',
+                'fExtra.accounts.context.user_role',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'fExtra.fExtra.wsgi.application'
+WSGI_APPLICATION = 'fExtra.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
