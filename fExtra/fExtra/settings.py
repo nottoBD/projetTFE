@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fExtra.accounts.apps.MainConfig',
+    'accounts.apps.MainConfig',
     'crispy_forms',
     'crispy_bootstrap5',
 ]
@@ -76,7 +76,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-ROOT_URLCONF = 'fExtra.fExtra.urls'
+ROOT_URLCONF = 'fExtra.urls'
 
 TEMPLATES = [
     {
