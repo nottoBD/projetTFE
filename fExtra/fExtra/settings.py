@@ -76,7 +76,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-ROOT_URLCONF = 'fExtra.urls'
+ROOT_URLCONF = 'fExtra.fExtra.urls'
 
 TEMPLATES = [
     {
