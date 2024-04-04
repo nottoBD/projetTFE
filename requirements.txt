@@ -7,6 +7,8 @@ sqlparse~=0.4.4
 asgiref~=3.7.2
 setuptools~=68.2.0
 environ~=1.0
+django-environ==0.10.0
+whitenoise==6.4.0
 pillow~=10.2.0
 crispy~=0.7.4
 crispy-bootstrap5~=2024.2
