@@ -4,7 +4,6 @@
 {% block title %}{% trans "Home Page" %}{% endblock %}
 
 {% block content %}
-    {% for expense in expenses %}
         <div class="card mt-2">
             <div class="card-header">
                 <strong>{% trans "Category" %}: {{ expense.category.name }}</strong>
@@ -21,7 +20,5 @@
                 {% trans "Posted on" %}: {{ expense.date }}
             </div>
         </div>
-    {% empty %}
 <p>{% trans "No expenses recorded yet" %}</p>
-
-{% endfor %} {% endblock %}
+ {% endblock %}

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+
+import dj_database_url
 from django.utils.translation import gettext_lazy as _
 import environ
 
@@ -98,14 +100,18 @@ WSGI_APPLICATION = 'fExtra.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'neokproject_dbtest',
+#         'USER': 'neokproject',
+#         'PASSWORD': 'Neokalwaysdata',
+#         'PORT': '5432'
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neokproject_dbtest',
-        'USER': 'neokproject',
-        'PASSWORD': 'Neokalwaysdata',
-        'PORT': '5432'
-    }
+    'default': dj_database_url.parse(env('DATABASE_URL'))
 }
 
 # Password validation
