@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var input = e.target.value.replace(/\D/g, '');
         var formattedInput = input;
 
-        
+
         if(input.length > 2) {
             formattedInput = input.substring(0, 2) + '.' + input.substring(2);
         }

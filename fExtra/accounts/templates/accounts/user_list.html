@@ -1,0 +1,73 @@
+{% extends 'fExtra/base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/user_list.css' %}">
+
+<div class="container-fluid">
+    <h2>{% trans "Magistrat List" %}</h2>
+    <!-- Magistrats table -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>{% trans "Last Name" %}</th>
+            <th>{% trans "First Name" %}</th>
+            <th>{% trans "Email" %}</th>
+            <th>{% trans "Role" %}</th>
+            <th>{% trans "Case" %}</th>
+        </tr>
+        </thead>
+        <tbody class="magistrats-list">
+        {% for magistrat in magistrats %}
+        <tr class="magistrat-item" data-user-id="{{ magistrat.id }}">
+            <td><img src="{{ magistrat.profile_image.url }}" alt="{{ magistrat.first_name }} {{ magistrat.last_name }}" width="30" height="30" class="rounded-circle"></td>
+            <td>{{ magistrat.last_name }}</td>
+            <td>{{ magistrat.first_name }}</td>
+            <td>{{ magistrat.email }}</td>
+            <td>
+                {% if magistrat.is_superuser %}Administrator
+                {% elif magistrat.role == 'admin' %}Administrator
+                {% elif magistrat.role == 'magistrat' %}Magistrat
+                {% else %}Parent
+                {% endif %}
+            </td>
+            <td>{{ magistrat.parents_count }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>{% trans "Parent List" %}</h2>
+    <!-- Parents table -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>{% trans "Last Name" %}</th>
+            <th>{% trans "First Name" %}</th>
+            <th>{% trans "Email" %}</th>
+            <th>{% trans "Referent" %}</th>
+        </tr>
+        </thead>
+        <tbody class="parents-list">
+        {% for parent in parents %}
+        <tr class="parent-item" data-user-id="{{ parent.id }}">
+            <td><img src="{{ parent.profile_image.url }}" alt="{% trans 'Profile Image' %}" width="30" height="30" class="rounded-circle"></td>
+            <td>{{ parent.last_name }}</td>
+            <td>{{ parent.first_name }}</td>
+            <td>{{ parent.email }}</td>
+            <td>
+                {% for magistrat in parent.my_magistrats.all %}
+                {{ magistrat.first_name }} {{ magistrat.last_name }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script src="{% static 'js/user_list.js' %}"></script>
+
+{% endblock %}
+

@@ -1,91 +1,163 @@
-from django.forms import inlineformset_factory
-from django.shortcuts import render, redirect
-from .forms import RegisterForm, MagistratRegistrationForm, ExpenseDocumentForm, ExpenseForm
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User, Group
-from .models import Profile, Expense, ExpenseDocument
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
+from django.db.models import Q, Count
+from django.http import JsonResponse, Http404
+from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.utils.translation import gettext as _
+from django.views.generic import ListView, UpdateView
 
-@login_required(login_url="/login")
-def home(request):
-    if request.user.is_superuser:
-        expenses = Expense.objects.all()
-    else:
-        expenses = Expense.objects.filter(author=request.user)
-    if request.method == "POST":
-        post_id = request.POST.get("post-id")
-        user_id = request.POST.get("user-id")
-        if post_id:
-            post = Expense.objects.filter(id=post_id).first()
-            if post and (post.author == request.user or request.user.has_perm("accounts.delete_post")):
-                post.delete()
-                return redirect('home')  # Redirection, évite double post
+from .forms import MagistratRegistrationForm, UserRegisterForm, UserUpdateForm
+from .models import User, MagistratParent
 
-        elif user_id and request.user.is_superuser:
-            user = User.objects.filter(id=user_id).first()
-            if user:
-                if not user.is_superuser:
-                    try:
-                        group = Group.objects.get(name='default')
-                        group.user_set.remove(user)
-                    except Group.DoesNotExist:
-                        pass
-                    try:
-                        group = Group.objects.get(name='mod')
-                        group.user_set.remove(user)
-                    except Group.DoesNotExist:
-                        pass
-                return redirect('home')
-    return render(request, 'accounts/home.html', {"expenses": expenses})
+User = get_user_model()
 
-@user_passes_test(lambda u: u.is_superuser, login_url='/login')
+class UserUpdateView(UserPassesTestMixin, UpdateView):
+    model = User
+    template_name = 'accounts/user_update.html'
+    success_url = reverse_lazy('accounts:user_list')
+    form_class = UserUpdateForm
+
+
+    def form_valid(self, form):
+        messages.success(self.request, _('Your profile has been successfully updated.'))
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('There was a problem updating your profile. Please check the form for errors.'))
+        return super().form_invalid(form)
+
+    def test_func(self):
+        user_to_update = self.get_object()
+        request_user = self.request.user
+        if not self.has_permission(user_to_update, request_user):
+            messages.error(self.request, _('You do not have permission to update this profile.'))
+            return False
+        return True
+
+    def get_user_to_update(self):
+        return get_object_or_404(User, pk=self.kwargs.get('pk'))
+
+    def has_permission(self, user_to_update, request_user):
+        # admin update all except other admin
+        if request_user.is_admin:
+            return not user_to_update.is_admin or user_to_update == request_user
+
+        if request_user.is_magistrat:
+            if user_to_update == request_user:
+                return True
+            return MagistratParent.objects.filter(magistrat=request_user, parent=user_to_update).exists()
+
+        if request_user.is_parent:
+            return user_to_update == request_user
+
+        return False  # default deny
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        if not self.has_permission(obj, self.request.user):
+            raise Http404(_("You do not have permission to update this profile."))
+        return obj
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'accounts/user_list.html'
+
+    def get_image_url(self, user):
+        if user.profile_image and hasattr(user.profile_image, 'url'):
+            return self.request.build_absolute_uri(user.profile_image.url)
+        else:
+            return self.request.build_absolute_uri(settings.MEDIA_URL + 'profile_images/default.jpg')
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            magistrats_list = [{
+                'id': mag.id,
+                'profile_image_url': self.get_image_url(mag),
+                'first_name': mag.first_name,
+                'last_name': mag.last_name,
+                'email': mag.email,
+                'role': mag.role,
+                'parents_count': mag.parents_count
+            } for mag in context['magistrats']]
+
+            parents_list = [{
+                'id': parent.id,
+                'profile_image_url': self.get_image_url(parent),
+                'first_name': parent.first_name,
+                'last_name': parent.last_name,
+                'email': parent.email,
+                'assigned_magistrats': [mag.magistrat.last_name for mag in parent.my_magistrats.all()]
+            } for parent in context['parents_filtered']]
+
+            # return  both
+            return JsonResponse({'magistrats': magistrats_list, 'parents': parents_list})
+        else:
+            return super().render_to_response(context, **response_kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['magistrats'] = User.objects.filter(
+            Q(is_staff=True) | Q(is_superuser=True) | Q(role='admin') | Q(role='magistrat')
+        ).annotate(parents_count=Count('assigned_parents'))
+
+        if self.request.user.role == 'magistrat':
+            #filtre parents assignés
+            context['parents_filtered'] = User.objects.filter(
+                my_magistrats__magistrat=self.request.user
+            ).distinct().prefetch_related('my_magistrats__magistrat')
+        else:
+            context['parents_filtered'] = context['parents'] = User.objects.exclude(
+                id__in=context['magistrats'].values('id')
+            ).prefetch_related('my_magistrats__magistrat')
+
+        return context
+
+@login_required
+@permission_required('accounts.add_user', raise_exception=True)
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
 def register_magistrat(request):
     if request.method == 'POST':
         form = MagistratRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            magistrat_group, _ = Group.objects.get_or_create(name='magistrat')
-            magistrat_group.user_set.add(user)
-            return redirect('/home')
+            magistrat = form.save()
+            messages.success(request, _('Magistrat "%s" registered successfully.' % magistrat.email))
+            return redirect(reverse('accounts:user_list'))
     else:
         form = MagistratRegistrationForm()
     return render(request, 'registration/sign_up_magistrat.html', {'form': form})
 
-@login_required(login_url="/login")
-def create_expense(request):
-    ExpenseDocumentFormSet = inlineformset_factory(Expense, ExpenseDocument, form=ExpenseDocumentForm, extra=1)
-    if request.method == 'POST':
-        form = ExpenseForm(request.POST)
-        formset = ExpenseDocumentFormSet(request.POST, request.FILES)
-        if form.is_valid() and formset.is_valid():
-            expense = form.save(commit=False)
-            expense.author = request.user
-            expense.save()
-            formset.instance = expense
-            formset.save()
-            return redirect("/home")
-    else:
-        form = ExpenseForm()
-        formset = ExpenseDocumentFormSet()
-    return render(request, 'accounts/create_expense.html', {"form": form, "formset": formset})
+
 
 def sign_up(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = UserRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            Profile.objects.create(
-                user=user,
-                num_telephone=form.cleaned_data.get('num_telephone'),
-                num_national=form.cleaned_data.get('num_national'),
-                genre=form.cleaned_data.get('genre'),
-                address=form.cleaned_data.get('address')
-            )
-            parent_group, created = Group.objects.get_or_create(name='parent')
-            parent_group.user_set.add(user)
-            login(request, user)
-            return redirect('/home')
+            user = form.save(commit=False)
+            user.role = 'parent'
+            user.national_number_raw = form.cleaned_data['national_number']
+            formatted_number = form.cleaned_data['national_number'][:2] + '.' + form.cleaned_data['national_number'][2:4] + '.' + form.cleaned_data['national_number'][4:6] + '-' + form.cleaned_data['national_number'][6:9] + '.' + form.cleaned_data['national_number'][9:]
+            user.national_number = formatted_number
+            user.save()
+
+            if not request.user.is_authenticated:
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                messages.success(request, _("Your account has been created! You are now logged in."))
+                return redirect('home')
+
+            else:
+                if request.user.role == 'magistrat':
+                    MagistratParent.objects.create(magistrat=request.user, parent=user)
+
+                messages.success(request, _("The parent account has been successfully created."))
+                return redirect('/accounts/list/')
+
     else:
-        form = RegisterForm()
-    return render(request, 'registration/sign_up.html', {"form": form})
+        form = UserRegisterForm()
+    return render(request, 'registration/sign_up.html', {'form': form})
+
