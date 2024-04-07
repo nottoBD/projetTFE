@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% load i18n static %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+        <meta name="csrf-token" content="{{ csrf_token }}">
+
+        <title>{% block title %}{% trans "fExtra Plateform" %}{% endblock %}</title>
+        <!--        <link rel="stylesheet" href="{% static 'css/base.css' %}">-->
+    </head>
+
+
+<body>
+
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-2 pt-2 text-white min-vh-100">
+                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <span class="fs-5 d-none d-sm-inline">{% trans "Platform - fExtra" %}</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                    <li class="nav-item">
+                        <a  href="/" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li>
+                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Accounts</span> </a>
+                        <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                            <li class="w-100">
+
+
+                                <a href="/accounts/list" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "List All" %}</a>
+                            </li>
+                            <li>
+                                <a href="/accounts/sign_up" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Parent" %}</a>
+                            </li>
+                            <li>
+                                <a href="/accounts/register-magistrat" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Magistrat" %}</a>
+                            </li>
+                            <li>
+                                <a href="/accounts/update/{{ user.id }}/" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Update" %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Orders</span></a>
+                    </li>
+                    <li>
+                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
+                            <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>
+                        <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                            <li class="w-100">
+                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 1</a>
+                            </li>
+                            <li>
+                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 2</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Customers</span> </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Languages" %}</span>
+                        </a>
+                        <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% for lang in LANGUAGES %}
+                            <!--
+                            django-admin makemessages -l nl_BE -l de -l fr
+                            django-admin compilemessages
+                            -->
+                            <li class="w-100">
+                                <a href="#" class="nav-link px-0 language-selector" data-language="{{ lang.0 }}">
+                                    <span class="d-none d-sm-inline">{{ lang.1 }}</span> {{ lang.0|cut:"_BE"|cut:"-BE" }}
+                                </a>
+                            </li>
+
+                            {% endfor %}
+                        </ul>
+                    </li>
+
+                </ul>
+                <hr>
+                <div class="dropdown pb-4">
+                    {% if user.is_authenticated %}
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+
+                        <img src="{{ user.profile_image.url }}" alt="{{ user.get_full_name }}" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1">{% if user.first_name and user.last_name %}
+                                                {{ user.last_name }} {{ user.first_name|first|upper }}.
+                                            {% else %}
+                                                {{ user.email }}
+                                            {% endif %}
+                                            {% if user.is_admin %}
+                                                <small>({% trans "Administrator" %})</small>
+                                            {% elif user.is_magistrat %}
+                                                <small>({% trans "Magistrat" %})</small>
+                                            {% elif user.is_parent %}
+                                                <small>({% trans "Parent" %})</small>
+                                            {% endif %}
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item" href="/accounts/update/{{ user.id }}/">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>                <form action="{% url 'accounts:logout' %}" method="post" class="d-flex">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link nav-link" >{% trans "Logout" %}</button>
+                        </form></li>
+                    </ul>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <div class="col py-3">
+            {% block content %}
+
+            <!-- child  templates  here -->
+
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/base.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
