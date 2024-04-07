@@ -1,4 +1,4 @@
-{% extends 'accounts/base.html' %}
+{% extends 'fExtra/base.html' %}
 
 {% load i18n crispy_forms_tags %}
 
@@ -8,6 +8,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">{% trans "Register Magistrat" %}</button>
+    <button type="submit" class="btn btn-outline-primary">{% trans "Register Magistrat" %}</button>
 </form>
 {% endblock %}
