@@ -1,280 +1,296 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# BACHELOR-PROJEKT: Plattform zur Verwaltung außergewöhnlicher Kosten für Familienrechtsberufe.
+# Urheberrecht (C) 2024
+# Diese Datei wird unter der MIT-Lizenz verteilt.
+# Botton David david.botton@hainaut-promsoc.be, 2024.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-25 15:10+0100\n"
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: Botton David\n"
+"POT-Creation-Date: 2024-04-07 11:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Last-Translator: Botton David david.botton@hainaut-promsoc.be\n"
+"Language-Team: FR <LL@li.org>\n"
+"Language: DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: accounts/context.py:8
-msgid "(administrator)"
-msgstr "(administrator)"
+#: accounts/forms.py:36
+msgid "Unsupported file type. Please upload a JPEG, PNG, or GIF image."
+msgstr "Nicht unterstützter Dateityp. Bitte laden Sie ein JPEG-, PNG- oder GIF-Bild hoch."
 
-#: accounts/context.py:10
-msgid "(magistrat)"
-msgstr "(magistrat)"
+#: accounts/forms.py:44 accounts/forms.py:73
+#: accounts/templates/accounts/user_list.html:15
+#: accounts/templates/accounts/user_list.html:48
+msgid "First Name"
+msgstr "Vorname"
 
-#: accounts/context.py:12
-msgid "(parent)"
-msgstr "(elternteil)"
+#: accounts/forms.py:45 accounts/forms.py:72
+#: accounts/templates/accounts/user_list.html:14
+#: accounts/templates/accounts/user_list.html:47
+msgid "Last Name"
+msgstr "Nachname"
 
-#: accounts/forms.py:9 accounts/forms.py:30
+#: accounts/forms.py:46
 msgid "Telephone Number"
 msgstr "Telefonnummer"
 
-#: accounts/forms.py:10
-msgid "National Number"
-msgstr "Nationale Nummer"
+#: accounts/forms.py:47
+msgid "Assign Parents"
+msgstr "Eltern zuweisen"
 
-#: accounts/forms.py:12
-msgid "Male"
-msgstr "Männlich"
-
-#: accounts/forms.py:12
-msgid "Female"
-msgstr "Weiblich"
-
-#: accounts/forms.py:12
-msgid "Other"
-msgstr "Anderes"
-
-#: accounts/forms.py:14
+#: accounts/forms.py:70
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: accounts/forms.py:16
+#: accounts/forms.py:71
+msgid "National Number"
+msgstr "Nationale Identifikationsnummer"
+
+#: accounts/forms.py:74
+msgid "Telephone"
+msgstr "Telefon"
+
+#: accounts/forms.py:75
 msgid "Address"
 msgstr "Adresse"
 
-#: accounts/forms.py:22 accounts/forms.py:36
-msgid "Username"
-msgstr "Benutzername"
+#: accounts/forms.py:88
+msgid "National number must be exactly 11 digits long."
+msgstr "Die nationale Identifikationsnummer muss genau 11 Ziffern lang sein."
 
-#: accounts/forms.py:23 accounts/forms.py:37
-msgid "Email"
-msgstr "E-Mail"
+#: accounts/management/commands/populate_categories.py:11
+msgid "Prepopulates the database with predefined categories and sub-categories."
+msgstr "Füllt die Datenbank vorab mit vordefinierten Kategorien und Unterkategorien."
 
-#: accounts/forms.py:24 accounts/forms.py:38
-msgid "Password"
-msgstr "Passwort"
-
-#: accounts/forms.py:25 accounts/forms.py:39
-msgid "Confirm Password"
-msgstr "Passwort bestätigen"
-
-#: accounts/forms.py:48 accounts/templates/accounts/home.html:10
-msgid "Category"
-msgstr "Kategorie"
-
-#: accounts/forms.py:49
-msgid "Sub Category"
-msgstr "Unterkategorie"
-
-#: accounts/forms.py:50 accounts/templates/accounts/home.html:15
-msgid "Cost"
-msgstr "Kosten"
-
-#: accounts/forms.py:51
-msgid "Date"
-msgstr "Datum"
-
-#: accounts/forms.py:52
-msgid "Commentary"
-msgstr "Kommentar"
-
-#: accounts/forms.py:61 accounts/templates/accounts/home.html:17
-msgid "Document"
-msgstr "Dokument"
-#: accounts/management/commands/populate_categories.py:9
-msgid ""
-"Prepopulates the database with predefined categories and sub-categories."
-msgstr "Füllt die Datenbank mit vordefinierten Kategorien und Unterkategorien vor."
-
-#: accounts/management/commands/populate_categories.py:14
+#: accounts/management/commands/populate_categories.py:16
 msgid "Medical and paramedical expenses"
 msgstr "Medizinische und paramedizinische Ausgaben"
 
-#: accounts/management/commands/populate_categories.py:15
-msgid ""
-"Treatments by medical specialists and the medications, specialized "
-"examinations and care they prescribe"
-msgstr "Behandlungen durch medizinische Fachkräfte und die von ihnen verschriebenen Medikamente, spezialisierten Untersuchungen und Pflege"
-
-#: accounts/management/commands/populate_categories.py:16
-msgid ""
-"Costs of surgical and hospitalization procedures and the specific treatments "
-"resulting therefrom"
-msgstr "Kosten für chirurgische Eingriffe und Krankenhausaufenthalte sowie die daraus resultierenden spezifischen Behandlungen"
-
 #: accounts/management/commands/populate_categories.py:17
-msgid ""
-"Medical and paramedical expenses and devices, including orthodontics, speech "
-"therapy, ophthalmology, etc."
-msgstr "Medizinische und paramedizinische Ausgaben und Geräte, einschließlich Kieferorthopädie, Sprachtherapie, Augenheilkunde usw."
+msgid "Treatments by medical specialists and the medications, specialized examinations and care they prescribe"
+msgstr "Behandlungen durch medizinische Fachkräfte und die von ihnen verschriebenen Medikamente, spezialisierte Untersuchungen und Pflege"
 
 #: accounts/management/commands/populate_categories.py:18
-msgid ""
-"Annual premium for hospitalization insurance or other supplementary insurance"
-msgstr "Jahresprämie für Krankenhausversicherung oder andere Zusatzversicherungen"
+msgid "Costs of surgical and hospitalization procedures and the specific treatments resulting therefrom"
+msgstr "Kosten für chirurgische Eingriffe und Krankenhausaufenthalte sowie die daraus resultierenden spezifischen Behandlungen"
+
+#: accounts/management/commands/populate_categories.py:19
+msgid "Medical and paramedical expenses and devices, including orthodontics, speech therapy, ophthalmology, etc."
+msgstr "Medizinische und paramedizinische Ausgaben und Geräte, einschließlich Kieferorthopädie, Sprachtherapie, Augenheilkunde usw."
 
 #: accounts/management/commands/populate_categories.py:20
+msgid "Annual premium for hospitalization insurance or other supplementary insurance"
+msgstr "Jahresprämie für Krankenhausversicherung oder andere Zusatzversicherungen"
+
+#: accounts/management/commands/populate_categories.py:22
 msgid "Costs relating to school training"
 msgstr "Kosten im Zusammenhang mit der schulischen Ausbildung"
 
-#: accounts/management/commands/populate_categories.py:21
-msgid ""
-"School activities of several days, like snow classes, sea classes, green "
-"classes"
-msgstr "Schulaktivitäten von mehreren Tagen, wie Schneeklassen, Seeklassen, Grüne Klassen"
-
-#: accounts/management/commands/populate_categories.py:22
-msgid "Necessary, specialized and costly school materials and/or clothing"
-msgstr "Notwendige, spezialisierte und kostspielige Schulmaterialien und/oder Kleidung"
-
 #: accounts/management/commands/populate_categories.py:23
-msgid "Tuition fees and courses for higher education and special training"
-msgstr "Studiengebühren und Kurse für die Hochschulbildung und spezielle Ausbildung"
+msgid "School activities of several days, like snow classes, sea classes, green classes"
+msgstr "Mehrtägige Schulaktivitäten, wie Schneeklassen, Seeklassen, Grüne Klassen"
 
 #: accounts/management/commands/populate_categories.py:24
-msgid "Purchase of computer hardware and printers with necessary software"
-msgstr "Kauf von Computerhardware und Druckern mit der notwendigen Software"
+msgid "Necessary, specialized and costly school materials and/or clothing"
+msgstr "Notwendiges, spezialisiertes und kostspieliges Schulmaterial und/oder Kleidung"
 
 #: accounts/management/commands/populate_categories.py:25
-msgid "Private lessons for school year success"
-msgstr "Private Nachhilfestunden für den Schulerfolg"
+msgid "Tuition fees and courses for higher education and special training"
+msgstr "Studiengebühren und Kurse für die Hochschulbildung und spezielle Ausbildungen"
 
 #: accounts/management/commands/populate_categories.py:26
+msgid "Purchase of computer hardware and printers with necessary software"
+msgstr "Anschaffung von Computern und Druckern mit der notwendigen Software"
+
+#: accounts/management/commands/populate_categories.py:27
+msgid "Private lessons for school year success"
+msgstr "Privatunterricht für den schulischen Erfolg"
+
+#: accounts/management/commands/populate_categories.py:28
 msgid "Cost of renting a student room"
 msgstr "Kosten für die Anmietung eines Studentenzimmers"
 
-#: accounts/management/commands/populate_categories.py:27
-msgid "Additional specific costs related to study abroad program"
-msgstr "Zusätzliche spezifische Kosten im Zusammenhang mit dem Auslandsstudium"
-
 #: accounts/management/commands/populate_categories.py:29
-msgid ""
-"Expenses related to the development of the personality and development of "
-"the child"
-msgstr "Ausgaben im Zusammenhang mit der Persönlichkeitsentwicklung und der Entwicklung des Kindes"
+msgid "Additional specific costs related to study abroad program"
+msgstr "Zusätzliche spezifische Kosten im Zusammenhang mit Auslandsstudienprogrammen"
 
-#: accounts/management/commands/populate_categories.py:30
+#: accounts/management/commands/populate_categories.py:31
+msgid "Expenses related to the development of the personality and development of the child"
+msgstr "Ausgaben im Zusammenhang mit der Persönlichkeitsentwicklung und Entwicklung des Kindes"
+
+#: accounts/management/commands/populate_categories.py:32
 msgid "Child care expenses from 0 to 3 years included"
 msgstr "Kinderbetreuungskosten von 0 bis 3 Jahren inklusive"
 
-#: accounts/management/commands/populate_categories.py:31
-msgid ""
-"Dues, basic supplies, and fees for camps and internships in cultural, "
-"sporting, or artistic activities"
-msgstr "Beiträge, Grundausstattungen und Gebühren für Lager und Praktika in kulturellen, sportlichen oder künstlerischen Aktivitäten"
+#: accounts/management/commands/populate_categories.py:33
+msgid "Dues, basic supplies, and fees for camps and internships in cultural, sporting, or artistic activities"
+msgstr "Beiträge, Grundausstattung und Gebühren für Lager und Praktika in kulturellen, sportlichen oder künstlerischen Aktivitäten"
 
-#: accounts/management/commands/populate_categories.py:32
-msgid ""
-"Registration fee for driving courses and theoretical and practical "
-"examinations of the driving licence"
-msgstr "Anmeldegebühr für Fahrkurse und theoretische sowie praktische Prüfungen des Führerscheins"
+#: accounts/management/commands/populate_categories.py:34
+msgid "Registration fee for driving courses and theoretical and practical examinations of the driving licence"
+msgstr "Anmeldegebühr für Fahrunterricht und theoretische sowie praktische Prüfungen des Führerscheins"
 
+#: accounts/models.py:45
+msgid "first name"
+msgstr "Vorname"
 
-#: accounts/templates/accounts/base.html:23
-msgid "Home"
-msgstr "Startseite"
+#: accounts/models.py:46
+msgid "last name"
+msgstr "Nachname"
 
-#: accounts/templates/accounts/base.html:27
-msgid "Expense"
-msgstr "Ausgabe"
+#: accounts/models.py:47
+msgid "Enter a valid email address"
+msgstr "Geben Sie eine gültige E-Mail-Adresse ein"
 
-#: accounts/templates/accounts/base.html:32
+#: accounts/templates/accounts/user_list.html:8
+msgid "Magistrat List"
+msgstr "Liste der Magistrate"
+
+#: accounts/templates/accounts/user_list.html:16
+#: accounts/templates/accounts/user_list.html:49
+msgid "Email"
+msgstr "E-Mail"
+
+#: accounts/templates/accounts/user_list.html:17
+msgid "Role"
+msgstr "Rolle"
+
+#: accounts/templates/accounts/user_list.html:18
+msgid "Case"
+msgstr "Fall"
+
+#: accounts/templates/accounts/user_list.html:41
+msgid "Parent List"
+msgstr "Elternliste"
+
+#: accounts/templates/accounts/user_list.html:50
+msgid "Referent"
+msgstr "Referent"
+
+#: accounts/templates/accounts/user_list.html:56
+msgid "Profile Image"
+msgstr "Profilbild"
+
+#: accounts/templates/registration/login.html:4
+#: accounts/templates/registration/login.html:13
+#: accounts/templates/registration/sign_up.html:14
+msgid "Login"
+msgstr "Anmelden"
+
+#: accounts/templates/registration/login.html:10
+msgid "Don't have an account? Create one"
+msgstr "Haben Sie kein Konto? Erstellen Sie eines"
+
+#: accounts/templates/registration/login.html:11
+msgid "Here"
+msgstr "Hier"
+
+#: accounts/templates/registration/sign_up.html:6
+msgid "Sign Up"
+msgstr "Registrieren"
+
+#: accounts/templates/registration/sign_up.html:13
+msgid "Have an account?  "
+msgstr "Haben Sie bereits ein Konto?  "
+
+#: accounts/templates/registration/sign_up.html:18
+msgid "Register"
+msgstr "Registrieren"
+
 #: accounts/templates/registration/sign_up_magistrat.html:5
 #: accounts/templates/registration/sign_up_magistrat.html:11
 msgid "Register Magistrat"
 msgstr "Magistrat registrieren"
 
-#: accounts/templates/accounts/base.html:39
-msgid "Language"
-msgstr "Sprache"
+#: accounts/views.py:29
+msgid "Your profile has been successfully updated."
+msgstr "Ihr Profil wurde erfolgreich aktualisiert."
 
-#: accounts/templates/accounts/base.html:58
-msgid "Logged in as"
-msgstr "Angemeldet als"
+#: accounts/views.py:33
+msgid "There was a problem updating your profile. Please check the form for errors."
+msgstr "Es gab ein Problem bei der Aktualisierung Ihres Profils. Bitte überprüfen Sie das Formular auf Fehler."
 
-#: accounts/templates/accounts/base.html:62
-msgid "Logout"
-msgstr "Abmelden"
+#: accounts/views.py:40 accounts/views.py:69
+msgid "You do not have permission to update this profile."
+msgstr "Sie haben keine Berechtigung, dieses Profil zu aktualisieren."
 
-#: accounts/templates/accounts/base.html:67
-#: accounts/templates/registration/login.html:4
-#: accounts/templates/registration/login.html:10
-msgid "Login"
-msgstr "Anmelden"
+#: accounts/views.py:141
+#, python-format
+msgid "Magistrat \"%s\" registered successfully."
+msgstr "Magistrat \"%s\" erfolgreich registriert."
 
-#: accounts/templates/accounts/create_expense.html:4
-msgid "Add expense"
-msgstr "Ausgabe hinzufügen"
+#: accounts/views.py:163
+msgid "Your account has been created! You are now logged in."
+msgstr "Ihr Konto wurde erstellt! Sie sind jetzt angemeldet."
 
-#: accounts/templates/accounts/create_expense.html:15
-msgid "Save expense"
-msgstr "Ausgabe speichern"
+#: accounts/views.py:172
+msgid "The parent account has been successfully created."
+msgstr "Das Elternkonto wurde erfolgreich erstellt."
 
-#: accounts/templates/accounts/home.html:4
-msgid "Home Page"
-msgstr "Startseite"
-
-#: accounts/templates/accounts/home.html:16
-msgid "Comment"
-msgstr "Kommentar"
-
-#: accounts/templates/accounts/home.html:21
-msgid "Posted on"
-msgstr "Veröffentlicht am"
-
-#: accounts/templates/accounts/home.html:25
-msgid "No expenses recorded yet"
-msgstr "Noch keine Ausgaben erfasst"
-
-#: accounts/templates/registration/login.html:9
-msgid "Don't have an account? Create one"
-msgstr "Kein Konto? Erstellen Sie eins"
-
-#: accounts/templates/registration/login.html:9
-#: accounts/templates/registration/sign_up.html:8
-msgid "Here"
-msgstr "Hier"
-
-#: accounts/templates/registration/sign_up.html:2
-msgid "Sign Up"
-msgstr "Registrieren"
-
-#: accounts/templates/registration/sign_up.html:8
-msgid "Have an account? Login"
-msgstr "Haben Sie ein Konto? Anmelden"
-
-#: accounts/templates/registration/sign_up.html:9
-msgid "Register"
-msgstr "Registrieren"
-
-#: fExtra/settings.py:61
-msgid "English"
-msgstr "Englisch"
-
-#: fExtra/settings.py:62
+#: fExtra/settings.py:87
 msgid "French"
 msgstr "Französisch"
 
-#: fExtra/settings.py:63
+#: fExtra/settings.py:88
+msgid "English"
+msgstr "Englisch"
+
+#: fExtra/settings.py:89
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: fExtra/settings.py:64
+#: fExtra/settings.py:90
 msgid "German"
 msgstr "Deutsch"
+
+#: templates/fExtra/base.html:14
+msgid "fExtra Plateform"
+msgstr "fExtra Plattform"
+
+#: templates/fExtra/base.html:26
+msgid "Platform - fExtra"
+msgstr "Plattform - fExtra"
+
+#: templates/fExtra/base.html:42
+msgid "List All"
+msgstr "Alle auflisten"
+
+#: templates/fExtra/base.html:45
+msgid "Add Parent"
+msgstr "Elternteil hinzufügen"
+
+#: templates/fExtra/base.html:48
+msgid "Add Magistrat"
+msgstr "Magistrat hinzufügen"
+
+#: templates/fExtra/base.html:51
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: templates/fExtra/base.html:78
+msgid "Languages"
+msgstr "Sprachen"
+
+#: templates/fExtra/base.html:111
+msgid "Administrator"
+msgstr "Administrator"
+
+#: templates/fExtra/base.html:113
+msgid "Magistrat"
+msgstr "Magistrat"
+
+#: templates/fExtra/base.html:115
+msgid "Parent"
+msgstr "Elternteil"
+
+#: templates/fExtra/base.html:126
+msgid "Logout"
+msgstr "Abmelden"
+
+#: templates/fExtra/home.html:6
+msgid "Home Page"
+msgstr "Startseite"
