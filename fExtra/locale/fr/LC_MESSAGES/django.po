@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"Report-Msgid-Bugs-To: Botton David\n"
-"POT-Creation-Date: 2024-04-07 11:50+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-08 11:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Botton David david.botton@hainaut-promsoc.be\n"
 "Language-Team: FR <LL@li.org>\n"
@@ -18,93 +18,122 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: accounts/forms.py:36
+#: accounts/forms.py:34
 msgid "Unsupported file type. Please upload a JPEG, PNG, or GIF image."
-msgstr "Type de fichier non pris en charge. Veuillez télécharger une image JPEG, PNG ou GIF."
+msgstr ""
+"Type de fichier non pris en charge. Veuillez télécharger une image JPEG, PNG "
+"ou GIF."
 
-#: accounts/forms.py:44 accounts/forms.py:73
+#: accounts/forms.py:40 accounts/forms.py:68
 #: accounts/templates/accounts/user_list.html:15
 #: accounts/templates/accounts/user_list.html:48
 msgid "First Name"
 msgstr "Prénom"
 
-#: accounts/forms.py:45 accounts/forms.py:72
+#: accounts/forms.py:41 accounts/forms.py:67
 #: accounts/templates/accounts/user_list.html:14
 #: accounts/templates/accounts/user_list.html:47
 msgid "Last Name"
 msgstr "Nom"
 
-#: accounts/forms.py:46
+#: accounts/forms.py:42
 msgid "Telephone Number"
 msgstr "Numéro de téléphone"
 
-#: accounts/forms.py:47
+#: accounts/forms.py:43
 msgid "Assign Parents"
 msgstr "Attribuer des parents"
 
-#: accounts/forms.py:70
+#: accounts/forms.py:65
 msgid "Gender"
 msgstr "Genre"
 
-#: accounts/forms.py:71
+#: accounts/forms.py:66
 msgid "National Number"
 msgstr "Numéro national"
 
-#: accounts/forms.py:74
+#: accounts/forms.py:69
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: accounts/forms.py:75
+#: accounts/forms.py:70
 msgid "Address"
 msgstr "Adresse"
 
-#: accounts/forms.py:88
+#: accounts/forms.py:82
 msgid "National number must be exactly 11 digits long."
 msgstr "Le numéro national doit comporter exactement 11 chiffres."
 
 #: accounts/management/commands/populate_categories.py:11
-msgid "Prepopulates the database with predefined categories and sub-categories."
-msgstr "Pré-remplit la base de données avec des catégories et sous-catégories prédéfinies."
+msgid ""
+"Prepopulates the database with predefined categories and sub-categories."
+msgstr ""
+"Pré-remplit la base de données avec des catégories et sous-catégories "
+"prédéfinies."
 
 #: accounts/management/commands/populate_categories.py:16
 msgid "Medical and paramedical expenses"
 msgstr "Dépenses médicales et paramédicales"
 
 #: accounts/management/commands/populate_categories.py:17
-msgid "Treatments by medical specialists and the medications, specialized examinations and care they prescribe"
-msgstr "Traitements par des spécialistes médicaux et les médicaments, examens spécialisés et soins qu'ils prescrivent"
+msgid ""
+"Treatments by medical specialists and the medications, specialized "
+"examinations and care they prescribe"
+msgstr ""
+"Traitements par des spécialistes médicaux et les médicaments, examens "
+"spécialisés et soins qu'ils prescrivent"
 
 #: accounts/management/commands/populate_categories.py:18
-msgid "Costs of surgical and hospitalization procedures and the specific treatments resulting therefrom"
-msgstr "Coûts des procédures chirurgicales et d'hospitalisation et des traitements spécifiques qui en découlent"
+msgid ""
+"Costs of surgical and hospitalization procedures and the specific treatments "
+"resulting therefrom"
+msgstr ""
+"Coûts des procédures chirurgicales et d'hospitalisation et des traitements "
+"spécifiques qui en découlent"
 
 #: accounts/management/commands/populate_categories.py:19
-msgid "Medical and paramedical expenses and devices, including orthodontics, speech therapy, ophthalmology, etc."
-msgstr "Dépenses et dispositifs médicaux et paramédicaux, y compris orthodontie, orthophonie, ophtalmologie, etc."
+msgid ""
+"Medical and paramedical expenses and devices, including orthodontics, speech "
+"therapy, ophthalmology, etc."
+msgstr ""
+"Dépenses et dispositifs médicaux et paramédicaux, y compris orthodontie, "
+"orthophonie, ophtalmologie, etc."
 
 #: accounts/management/commands/populate_categories.py:20
-msgid "Annual premium for hospitalization insurance or other supplementary insurance"
-msgstr "Prime annuelle pour l'assurance hospitalisation ou autre assurance complémentaire"
+msgid ""
+"Annual premium for hospitalization insurance or other supplementary insurance"
+msgstr ""
+"Prime annuelle pour l'assurance hospitalisation ou autre assurance "
+"complémentaire"
 
 #: accounts/management/commands/populate_categories.py:22
 msgid "Costs relating to school training"
 msgstr "Coûts relatifs à la formation scolaire"
 
 #: accounts/management/commands/populate_categories.py:23
-msgid "School activities of several days, like snow classes, sea classes, green classes"
-msgstr "Activités scolaires de plusieurs jours, comme les classes de neige, de mer, vertes"
+msgid ""
+"School activities of several days, like snow classes, sea classes, green "
+"classes"
+msgstr ""
+"Activités scolaires de plusieurs jours, comme les classes de neige, de mer, "
+"vertes"
 
 #: accounts/management/commands/populate_categories.py:24
 msgid "Necessary, specialized and costly school materials and/or clothing"
-msgstr "Matériels et/ou vêtements scolaires nécessaires, spécialisés et coûteux"
+msgstr ""
+"Matériels et/ou vêtements scolaires nécessaires, spécialisés et coûteux"
 
 #: accounts/management/commands/populate_categories.py:25
 msgid "Tuition fees and courses for higher education and special training"
-msgstr "Frais de scolarité et cours pour l'enseignement supérieur et la formation spécialisée"
+msgstr ""
+"Frais de scolarité et cours pour l'enseignement supérieur et la formation "
+"spécialisée"
 
 #: accounts/management/commands/populate_categories.py:26
 msgid "Purchase of computer hardware and printers with necessary software"
-msgstr "Achat de matériel informatique et d'imprimantes avec les logiciels nécessaires"
+msgstr ""
+"Achat de matériel informatique et d'imprimantes avec les logiciels "
+"nécessaires"
 
 #: accounts/management/commands/populate_categories.py:27
 msgid "Private lessons for school year success"
@@ -116,33 +145,52 @@ msgstr "Coût de la location d'une chambre d'étudiant"
 
 #: accounts/management/commands/populate_categories.py:29
 msgid "Additional specific costs related to study abroad program"
-msgstr "Coûts spécifiques supplémentaires liés au programme d'études à l'étranger"
+msgstr ""
+"Coûts spécifiques supplémentaires liés au programme d'études à l'étranger"
 
 #: accounts/management/commands/populate_categories.py:31
-msgid "Expenses related to the development of the personality and development of the child"
-msgstr "Dépenses liées au développement de la personnalité et à l'évolution de l'enfant"
+msgid ""
+"Expenses related to the development of the personality and development of "
+"the child"
+msgstr ""
+"Dépenses liées au développement de la personnalité et à l'évolution de "
+"l'enfant"
 
 #: accounts/management/commands/populate_categories.py:32
 msgid "Child care expenses from 0 to 3 years included"
 msgstr "Frais de garde d'enfants de 0 à 3 ans inclus"
 
 #: accounts/management/commands/populate_categories.py:33
-msgid "Dues, basic supplies, and fees for camps and internships in cultural, sporting, or artistic activities"
-msgstr "Cotisations, fournitures de base et frais pour les camps et stages dans des activités culturelles, sportives ou artistiques"
+msgid ""
+"Dues, basic supplies, and fees for camps and internships in cultural, "
+"sporting, or artistic activities"
+msgstr ""
+"Cotisations, fournitures de base et frais pour les camps et stages dans des "
+"activités culturelles, sportives ou artistiques"
 
 #: accounts/management/commands/populate_categories.py:34
-msgid "Registration fee for driving courses and theoretical and practical examinations of the driving licence"
-msgstr "Frais d'inscription pour les cours de conduite et les examens théoriques et pratiques du permis de conduire"
+msgid ""
+"Registration fee for driving courses and theoretical and practical "
+"examinations of the driving licence"
+msgstr ""
+"Frais d'inscription pour les cours de conduite et les examens théoriques et "
+"pratiques du permis de conduire"
 
-#: accounts/models.py:45
+#: accounts/models.py:13
+#, fuzzy
+#| msgid "Enter a valid email address"
+msgid "Users must have an email address"
+msgstr "Entrez une adresse e-mail valide"
+
+#: accounts/models.py:43
 msgid "first name"
 msgstr "prénom"
 
-#: accounts/models.py:46
+#: accounts/models.py:44
 msgid "last name"
 msgstr "nom"
 
-#: accounts/models.py:47
+#: accounts/models.py:45
 msgid "Enter a valid email address"
 msgstr "Entrez une adresse e-mail valide"
 
@@ -175,9 +223,13 @@ msgstr "Référent"
 msgid "Profile Image"
 msgstr "Image de profil"
 
+#: accounts/templates/accounts/user_update.html:15
+msgid "Save changes"
+msgstr "Enregistrer"
+
 #: accounts/templates/registration/login.html:4
 #: accounts/templates/registration/login.html:13
-#: accounts/templates/registration/sign_up.html:14
+#: accounts/templates/registration/sign_up.html:12
 msgid "Login"
 msgstr "Connexion"
 
@@ -189,15 +241,15 @@ msgstr "Vous n'avez pas de compte ? Créez-en un"
 msgid "Here"
 msgstr "Ici"
 
-#: accounts/templates/registration/sign_up.html:6
+#: accounts/templates/registration/sign_up.html:4
 msgid "Sign Up"
 msgstr "S'inscrire"
 
-#: accounts/templates/registration/sign_up.html:13
+#: accounts/templates/registration/sign_up.html:11
 msgid "Have an account?  "
 msgstr "Vous avez un compte ?  "
 
-#: accounts/templates/registration/sign_up.html:18
+#: accounts/templates/registration/sign_up.html:16
 msgid "Register"
 msgstr "Inscription"
 
@@ -206,28 +258,31 @@ msgstr "Inscription"
 msgid "Register Magistrat"
 msgstr "Inscription Magistrat"
 
-#: accounts/views.py:29
+#: accounts/views.py:27
 msgid "Your profile has been successfully updated."
 msgstr "Votre profil a été mis à jour avec succès."
 
-#: accounts/views.py:33
-msgid "There was a problem updating your profile. Please check the form for errors."
-msgstr "Il y a eu un problème lors de la mise à jour de votre profil. Veuillez vérifier le formulaire pour les erreurs."
+#: accounts/views.py:31
+msgid ""
+"There was a problem updating your profile. Please check the form for errors."
+msgstr ""
+"Il y a eu un problème lors de la mise à jour de votre profil. Veuillez "
+"vérifier le formulaire pour les erreurs."
 
-#: accounts/views.py:40 accounts/views.py:69
+#: accounts/views.py:38 accounts/views.py:63
 msgid "You do not have permission to update this profile."
 msgstr "Vous n'avez pas la permission de mettre à jour ce profil."
 
-#: accounts/views.py:141
+#: accounts/views.py:129
 #, python-format
 msgid "Magistrat \"%s\" registered successfully."
 msgstr "Le magistrat \"%s\" a été enregistré avec succès."
 
-#: accounts/views.py:163
+#: accounts/views.py:150
 msgid "Your account has been created! You are now logged in."
 msgstr "Votre compte a été créé ! Vous êtes maintenant connecté."
 
-#: accounts/views.py:172
+#: accounts/views.py:157
 msgid "The parent account has been successfully created."
 msgstr "Le compte parent a été créé avec succès."
 
@@ -239,6 +294,10 @@ msgstr "Français"
 msgid "English"
 msgstr "Anglais"
 
+#: fExtra/settings.py:89
+msgid "Dutch"
+msgstr ""
+
 #: fExtra/settings.py:90
 msgid "German"
 msgstr "Allemand"
@@ -248,8 +307,18 @@ msgid "fExtra Plateform"
 msgstr "Plateforme fExtra"
 
 #: templates/fExtra/base.html:26
-msgid "Platform - fExtra"
-msgstr "Plateforme - fExtra"
+msgid "Platform fExtra"
+msgstr "Plateforme fExtra"
+
+#: templates/fExtra/base.html:31
+#, fuzzy
+#| msgid "Home Page"
+msgid "Home"
+msgstr "Page d'accueil"
+
+#: templates/fExtra/base.html:37
+msgid "Accounts"
+msgstr "Comptes"
 
 #: templates/fExtra/base.html:42
 msgid "List All"
@@ -282,6 +351,12 @@ msgstr "Magistrat"
 #: templates/fExtra/base.html:115
 msgid "Parent"
 msgstr "Parent"
+
+#: templates/fExtra/base.html:120
+#, fuzzy
+#| msgid "Profile Image"
+msgid "Profile"
+msgstr "Image de profil"
 
 #: templates/fExtra/base.html:126
 msgid "Logout"
