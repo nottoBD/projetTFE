@@ -12,7 +12,7 @@
         <meta name="csrf-token" content="{{ csrf_token }}">
 
         <title>{% block title %}{% trans "fExtra Plateform" %}{% endblock %}</title>
-        <!--        <link rel="stylesheet" href="{% static 'css/base.css' %}">-->
+                <link rel="stylesheet" href="{% static 'css/base.css' %}">
     </head>
 
 
@@ -26,15 +26,29 @@
                     <span class="fs-5 d-none d-sm-inline">{% trans "Platform - fExtra" %}</span>
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                   {% if not user.is_authenticated %}
                     <li class="nav-item">
-                        <a  href="/" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                        <a  href="/accounts/login" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi bi-journal-check"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Sign-in" %}</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a  href="/accounts/sign_up" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi bi-journal-plus"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Sign-up" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
                     {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a  href="/" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Home" %}</span>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Accounts</span> </a>
+                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Accounts" %}</span> </a>
                         <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                             <li class="w-100">
 
@@ -52,30 +66,30 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Orders</span></a>
-                    </li>
-                    <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                            <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>
-                        <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
-                            <li class="w-100">
-                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 1</a>
-                            </li>
-                            <li>
-                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 2</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Customers</span> </a>
-                    </li>
+<!--                    <li>-->
+<!--                        <a href="#" class="nav-link px-0 align-middle">-->
+<!--                            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Orders</span></a>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">-->
+<!--                            <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>-->
+<!--                        <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">-->
+<!--                            <li class="w-100">-->
+<!--                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 1</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 2</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <a href="#" class="nav-link px-0 align-middle">-->
+<!--                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Customers</span> </a>-->
+<!--                    </li>-->
                     {% endif %}
                     <li>
                         <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Languages" %}</span>
+                            <i class="fs-4 bi-ui-checks-grid"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Languages" %}</span>
                         </a>
                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
                             {% get_current_language as LANGUAGE_CODE %}
@@ -117,7 +131,7 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                        <li><a class="dropdown-item" href="/accounts/update/{{ user.id }}/">Profile</a></li>
+                        <li><a class="dropdown-item" href="/accounts/update/{{ user.id }}/">{% trans "Profile" %}</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>

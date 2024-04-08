@@ -10,7 +10,10 @@
     <p>{% trans "Don't have an account? Create one" %}
         <a href="{% url 'accounts:sign_up' %}">{% trans "Here" %}</a>!
     </p>
-    <button type="submit" class="btn btn-success">{% trans "Login" %}</button>
+    <p>
+        <a href="{% url 'accounts:password_reset' %}"><i>{% trans "Forgot Password?" %}</i></a>
+    </p>
+    <button type="submit" class="btn btn-outline-primary">{% trans "Login" %}</button>
 </form>
 
 {% endblock %}

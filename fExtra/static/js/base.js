@@ -19,4 +19,24 @@ document.addEventListener('DOMContentLoaded', function () {
             form.submit();
         });
     });
+
+// Retenir la position des sous-menus
+    const currentUrl = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+
+    const submenus = document.querySelectorAll('ul.collapse.nav.flex-column');
+
+    submenus.forEach(function(submenu) {
+        submenu.querySelectorAll('a.nav-link').forEach(function(link) {
+            let linkHref = link.getAttribute('href');
+            linkHref = linkHref.endsWith('/') ? linkHref : linkHref + '/';
+
+            if (currentUrl === linkHref) {
+                submenu.classList.add('show');
+                const parentToggle = submenu.closest('li').querySelector('a[data-bs-toggle="collapse"]');
+                if (parentToggle) {
+                    parentToggle.classList.add('active');
+                }
+            }
+        });
+    });
 });
