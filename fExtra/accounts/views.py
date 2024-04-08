@@ -4,6 +4,8 @@ from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Count
 from django.http import JsonResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
@@ -14,7 +16,26 @@ from django.views.generic import ListView, UpdateView
 from .forms import MagistratRegistrationForm, UserRegisterForm, UserUpdateForm
 from .models import User, MagistratParent
 
+
 User = get_user_model()
+
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'registration/password_reset.html'
+    email_template_name = 'registration/password_reset_mail.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly. " \
+                      "If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('home')
+
+
+class PasswordResetConfirmationView(PasswordResetConfirmView):
+    template_name = 'registration/password_reset_confirmation.html'
+    post_reset_login = False
+    success_url = reverse_lazy('accounts:login')
 
 class UserUpdateView(UserPassesTestMixin, UpdateView):
     model = User

@@ -34,10 +34,15 @@ env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
 SECRET_KEY = env('SECRET_KEY')
 
+print(list(env.ENVIRON.keys()))# !
+
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env.bool("DEBUG", default=False)
+
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -46,9 +51,13 @@ DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = []
 
-# Application definition
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+SITE_ID = 1
+
+# Application definition
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

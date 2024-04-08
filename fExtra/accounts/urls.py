@@ -1,9 +1,9 @@
 from django.conf.urls.static import static
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordResetDoneView, PasswordResetCompleteView
 from django.urls import path, reverse_lazy
 
 from . import views
-from .views import register_magistrat
+from .views import register_magistrat, ResetPasswordView, PasswordResetConfirmationView
 from django.conf import settings
 
 app_name = 'accounts'
@@ -14,7 +14,12 @@ urlpatterns = [
     path('register-magistrat/', register_magistrat, name='register_magistrat'),
     path('update/<int:pk>/', views.UserUpdateView.as_view(), name='user_update'),
     path('list/', views.UserListView.as_view(), name='user_list'),
+    path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
+    path('reset/<uidb64>/<token>/', PasswordResetConfirmationView.as_view(), name='password_reset_confirmation'),
+    path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]
+
 
 #NOTE: Remove from production !!!
 if settings.DEBUG:
