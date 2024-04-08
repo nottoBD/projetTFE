@@ -296,7 +296,7 @@ msgstr "Anglais"
 
 #: fExtra/settings.py:89
 msgid "Dutch"
-msgstr ""
+msgstr "Néerlandais"
 
 #: fExtra/settings.py:90
 msgid "German"

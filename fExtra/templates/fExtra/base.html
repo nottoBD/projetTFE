@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load i18n static %}
+{% load i18n static language_filters %}
 
 <html lang="en">
     <head>
@@ -62,7 +62,7 @@
                                 <a href="/accounts/register-magistrat" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Magistrat" %}</a>
                             </li>
                             <li>
-                                <a href="/accounts/update/{{ user.id }}/" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Update" %}</a>
+                                <a href="/accounts/update/{{ user.id }}/" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Profile" %}</a>
                             </li>
                         </ul>
                     </li>
@@ -88,26 +88,35 @@
 <!--                    </li>-->
                     {% endif %}
                     <li>
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
                         <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-ui-checks-grid"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Languages" %}</span>
+                            <i class="fs-4 bi-ui-checks-grid"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Languages" %} ({{ LANGUAGE_CODE }})</span>
                         </a>
                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
-                            {% get_current_language as LANGUAGE_CODE %}
-                            {% get_available_languages as LANGUAGES %}
+
+                            <!-- lang 0 = language code          lang 1 = human readable-->
+
+
                             {% for lang in LANGUAGES %}
-                            <!--
-                            django-admin makemessages -l nl_BE -l de -l fr
-                            django-admin compilemessages
-                            -->
+                            {% if lang.0|compare_codes != LANGUAGE_CODE|compare_codes %}
                             <li class="w-100">
                                 <a href="#" class="nav-link px-0 language-selector" data-language="{{ lang.0 }}">
-                                    <span class="d-none d-sm-inline">{{ lang.1 }}</span> {{ lang.0|cut:"_BE"|cut:"-BE" }}
+                                    <!-- Display the language name and code, applying the cut filter for visual consistency -->
+                                    <span class="d-none d-sm-inline">{{ lang.1 }}</span>
+                                    <!-- Apply the cut filter only for display purposes -->
+                                    {{ lang.0|cut:"_BE"|cut:"-BE" }}
                                 </a>
                             </li>
-
+                            {% endif %}
                             {% endfor %}
                         </ul>
                     </li>
+                    <!--
+                    django-admin makemessages -l nl_BE -l de -l fr
+                    django-admin compilemessages
+                    -->
+
 
                 </ul>
                 <hr>
