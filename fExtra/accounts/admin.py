@@ -1,32 +1,33 @@
 from django.contrib import admin
-from .models import Category, SubCategory, Expense, ExpenseDocument
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
+from .models import MagistratParent
 
-@admin.register(Expense)
-class ExpenseAdmin(admin.ModelAdmin):
-    list_display = ('author', 'category', 'sub_category', 'cost', 'date', 'created_at', 'updated_at')
-    search_fields = ('category__name', 'sub_category__name', 'commentary')
-    list_filter = ('created_at', 'updated_at', 'author', 'category')
-    date_hierarchy = 'date'
 
 class UserAdmin(BaseUserAdmin):
-    list_display = BaseUserAdmin.list_display + ('group_names',)
+    model = User
+    list_display = ('email', 'date_of_birth', 'is_admin', 'is_staff')
+    list_filter = ('is_admin',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password', 'date_of_birth', 'role', 'is_active', 'is_staff')}),
+        ('Permissions', {'fields': ('is_admin', 'groups', 'user_permissions')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'date_of_birth', 'password1', 'password2', 'role', 'is_active', 'is_staff'),
+        }),
+    )
+    search_fields = ('email',)
+    ordering = ('email',)
+    filter_horizontal = ()
 
-    def group_names(self, obj):
-        return ', '.join([group.name for group in obj.groups.all()])
-    group_names.short_description = 'Groups'
 
-admin.site.unregister(User)
+class MagistratParentAdmin(admin.ModelAdmin):
+    list_display = ('magistrat', 'parent')
+    search_fields = ('magistrat__email', 'parent__email')
+
+
 admin.site.register(User, UserAdmin)
-
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user_count')
-
-    def user_count(self, obj):
-        return obj.user_set.count()
-    user_count.short_description = 'Number of Users'
-
-admin.site.unregister(Group)
-admin.site.register(Group, GroupAdmin)
+admin.site.register(MagistratParent, MagistratParentAdmin)
