@@ -58,9 +58,11 @@
                             <li>
                                 <a href="/accounts/sign_up" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Parent" %}</a>
                             </li>
+                            {% if user.is_superuser %}
                             <li>
                                 <a href="/accounts/register-magistrat" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Magistrat" %}</a>
                             </li>
+                            {% endif %}
                             <li>
                                 <a href="/accounts/update/{{ user.id }}/" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Profile" %}</a>
                             </li>
