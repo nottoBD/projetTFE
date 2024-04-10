@@ -46,6 +46,13 @@ class MagistratRegistrationForm(UserCreationForm):
         model = User
         fields = ['last_name', 'first_name', 'email', 'password1', 'password2',  'num_telephone', 'assigned_parents']
 
+    def __init__(self, *args, **kwargs):
+        super(MagistratRegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['email'].required = True
+        self.fields['password1'].help_text = None
+        self.fields['password2'].help_text = None
+        self.fields['assigned_parents'].help_text = _("Press Control or Shift to select several Parents.")
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.first_name = self.cleaned_data['first_name']
@@ -68,12 +75,7 @@ class UserRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, label=_("First Name"))
     telephone = forms.CharField(max_length=16, required=False, label=_("Telephone"))
     address = forms.CharField(widget=forms.TextInput, required=False, label=_("Address"), max_length=70)
-    date_of_birth = forms.DateField(
-        widget=DateInput(attrs={'type': 'text'}, format='%d/%m/%Y'),
-        input_formats=['%d/%m/%Y'],
-        required=True,
-        help_text='Required. Format: DD/MM/YYYY'
-    )
+    date_of_birth = forms.DateField(widget=DateInput(attrs={'type': 'text'}, format='%d/%m/%Y'), input_formats=['%d/%m/%Y'], required=True, help_text=_('Format: DD/MM/YYYY'))
 
     def clean_national_number(self):
         national_number = self.cleaned_data.get('national_number')
