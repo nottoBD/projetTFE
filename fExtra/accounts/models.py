@@ -8,12 +8,12 @@ from .validations import validate_image
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth, role="parent", password=None, **extra_fields):
+    def create_user(self, email, role="parent", password=None, **extra_fields):
         if not email:
             raise ValueError(_('Users must have an email address'))
 
         email = self.normalize_email(email)
-        user = self.model(email=email, date_of_birth=date_of_birth, role=role, **extra_fields)
+        user = self.model(email=email, role=role, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
@@ -21,12 +21,12 @@ class MyUserManager(BaseUserManager):
             assign_perm('accounts.view_user', user, user)
         return user
 
-    def create_superuser(self, email, date_of_birth, password=None, **extra_fields):
+    def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('role', 'admin')
 
-        user = self.create_user(email, date_of_birth, password=password, **extra_fields)
+        user = self.create_user(email, password=password, **extra_fields)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female'), ('X', 'Other')], null=True, blank=True, default='X')
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=150, blank=True)
-    email = models.EmailField(verbose_name='email address', unique=True, max_length=255, validators=[EmailValidator(message=_("Enter a valid email address"))])
+    email = models.EmailField(verbose_name='email address', unique=True, max_length=255)
     national_number_raw = models.CharField(max_length=11, blank=True, null=True)
     national_number = models.CharField(max_length=15, blank=True, null=True)
     date_of_birth = models.DateField(default=timezone.now)
@@ -54,7 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth']
+    REQUIRED_FIELDS = []
 
     objects = MyUserManager()
 
