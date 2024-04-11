@@ -92,63 +92,58 @@ class UserListView(LoginRequiredMixin, ListView):
             return self.request.build_absolute_uri(settings.MEDIA_URL + 'profile_images/default.jpg')
 
 
-class UserUpdateView(UserPassesTestMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     template_name = 'accounts/user_update.html'
-    success_url = reverse_lazy('accounts:user_list')
     form_class = UserUpdateForm
+    success_url = reverse_lazy('accounts:user_list')
 
+    def test_func(self):
+        user_to_update = self.get_object()
+
+        if self.request.user.is_superuser:
+            return True
+        if self.request.user.role == 'magistrate':
+            return MagistrateParent.objects.filter(magistrate=self.request.user, parent=user_to_update).exists()
+        if self.request.user == user_to_update:
+            return True
+        return False
 
     def get_form_kwargs(self):
-        kwargs = super(UserUpdateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['request_user'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        user = form.save(commit=False)
+        response = super().form_valid(form)
+        related_users_ids = set(form.cleaned_data.get('related_users').values_list('id', flat=True))
 
-        if 'is_active_toggle' in self.request.POST:
-            user.is_active = not user.is_active
-        user.save()
-        return super().form_valid(form)
+        if self.object.role == 'magistrate':
+            relationship_field = 'parent'
+            own_field = 'magistrate'
+        elif self.object.role == 'parent':
+            relationship_field = 'magistrate'
+            own_field = 'parent'
+        else:
+            return response
 
-    def form_invalid(self, form):
-        messages.error(self.request, _('There was a problem updating your profile. Please check the form for errors.'))
-        return super().form_invalid(form)
+        current_relations = set(MagistrateParent.objects.filter(**{own_field: self.object}).values_list(
+            relationship_field + '_id', flat=True))
 
-    def test_func(self):
-        user_to_update = self.get_object()
-        request_user = self.request.user
-        if not self.has_permission(user_to_update, request_user):
-            messages.error(self.request, _('You do not have permission to update this profile.'))
-            return False
-        return True
+        relationships_to_add = related_users_ids - current_relations
+        relationships_to_remove = current_relations - related_users_ids
 
-    def get_user_to_update(self):
-        return get_object_or_404(User, pk=self.kwargs.get('pk'))
+        MagistrateParent.objects.filter(**{own_field: self.object, relationship_field + '_id__in': relationships_to_remove}).delete()
 
-    def has_permission(self, user_to_update, request_user):
-        # admin update all except other admin
-        if request_user.is_superuser:
-            return not user_to_update.is_superuser or user_to_update == request_user
+        User = get_user_model()
+        for user_id in relationships_to_add:
+            user_instance = User.objects.get(pk=user_id)
+            MagistrateParent.objects.get_or_create(**{
+                own_field: self.object,
+                relationship_field: user_instance
+            })
 
-        if request_user.is_magistrate:
-            if user_to_update == request_user:
-                return True
-            return MagistrateParent.objects.filter(magistrate=request_user, parent=user_to_update).exists()
-
-        if request_user.is_parent:
-            return user_to_update == request_user
-
-        return False  # default deny
-
-    def get_object(self, queryset=None):
-        obj = super().get_object(queryset=queryset)
-        if not self.has_permission(obj, self.request.user):
-            raise Http404(_("You do not have permission to update this profile."))
-        return obj
-
-
+        return response
 
 @login_required
 @permission_required('accounts.add_user', raise_exception=True)
