@@ -75,7 +75,6 @@ AUTH_USER_MODEL = 'accounts.User'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', # Default Django auth
     'guardian.backends.ObjectPermissionBackend', # Guardian permission
-    'accounts.backends.CustomUserModelBackend',  # Active feature
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
