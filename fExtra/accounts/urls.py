@@ -3,15 +3,15 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordResetDoneVi
 from django.urls import path, reverse_lazy
 
 from . import views
-from .views import register_magistrat, ResetPasswordView, PasswordResetConfirmationView
+from .views import register_magistrate, ResetPasswordView, PasswordResetConfirmationView
 from django.conf import settings
 
 app_name = 'accounts'
 urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('accounts:login')), name='logout'),
-    path('sign_up/', views.sign_up, name='sign_up'),
-    path('register-magistrat/', register_magistrat, name='register_magistrat'),
+    path('register/', views.register, name='register'),
+    path('register-magistrate/', register_magistrate, name='register_magistrate'),
     path('update/<int:pk>/', views.UserUpdateView.as_view(), name='user_update'),
     path('list/', views.UserListView.as_view(), name='user_list'),
     path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),

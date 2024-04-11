@@ -15,7 +15,7 @@
 </div>
 
 <div class="container-fluid">
-    <h2>{% trans "Magistrat List" %}</h2>
+    <h2>{% trans "Magistrates List" %}</h2>
     <!-- Magistrats table -->
     <table class="table">
         <thead>
@@ -28,27 +28,27 @@
             <th>{% trans "Case" %}</th>
         </tr>
         </thead>
-        <tbody class="magistrats-list">
-        {% for magistrat in magistrats %}
-        <tr class="magistrat-item" data-user-id="{{ magistrat.id }}">
-            <td><img src="{{ magistrat.profile_image.url }}" alt="{{ magistrat.first_name }} {{ magistrat.last_name }}" width="30" height="30" class="rounded-circle"></td>
-            <td>{{ magistrat.last_name }}</td>
-            <td>{{ magistrat.first_name }}</td>
-            <td>{{ magistrat.email }}</td>
+        <tbody class="magistrates-list">
+        {% for magistrate in magistrates %}
+        <tr class="magistrate-item" data-user-id="{{ magistrate.id }}">
+            <td><img src="{{ magistrate.profile_image.url }}" alt="{{ magistrate.first_name }} {{ magistrate.last_name }}" width="30" height="30" class="rounded-circle"></td>
+            <td>{{ magistrate.last_name }}</td>
+            <td>{{ magistrate.first_name }}</td>
+            <td>{{ magistrate.email }}</td>
             <td>
-                {% if magistrat.is_superuser %}Administrator
-                {% elif magistrat.role == 'admin' %}Administrator
-                {% elif magistrat.role == 'magistrat' %}Magistrat
+                {% if magistrate.is_superuser %}Administrator
+                {% elif magistrate.role == 'admin' %}Administrator
+                {% elif magistrate.role == 'magistrate' %}Magistrate
                 {% else %}Parent
                 {% endif %}
             </td>
-            <td>{{ magistrat.parents_count }}</td>
+            <td>{{ magistrate.parents_count }}</td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <h2>{% trans "Parent List" %}</h2>
+    <h2>{% trans "Parents List" %}</h2>
     <!-- Parents table -->
     <table class="table">
         <thead>
@@ -68,8 +68,8 @@
             <td>{{ parent.first_name }}</td>
             <td>{{ parent.email }}</td>
             <td>
-                {% for magistrat in parent.my_magistrats.all %}
-                {{ magistrat.first_name }} {{ magistrat.last_name }}<br>
+                {% for magistrate in parent.magistrates_assigned.all %}
+                {{ magistrate.first_name }} {{ magistrate.last_name }}<br>
                 {% endfor %}
             </td>
         </tr>

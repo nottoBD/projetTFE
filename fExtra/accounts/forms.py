@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 
-from .models import MagistratParent
+from .models import MagistrateParent
 
 User = get_user_model()
 
@@ -42,36 +42,36 @@ class UserUpdateForm(UserChangeForm):
         return profile_image
 
 
-class MagistratRegistrationForm(UserCreationForm):
+class MagistrateRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, label=_('First Name'), required=True)
     last_name = forms.CharField(max_length=150, label=_('Last Name'), required=True)
     num_telephone = forms.CharField(max_length=20, initial='+32', label=_('Telephone Number'), required=False)
-    assigned_parents = forms.ModelMultipleChoiceField(queryset=User.objects.filter(role='parent'), required=False, label=_("Assign Parents"))
+    parents_assigned = forms.ModelMultipleChoiceField(queryset=User.objects.filter(role='parent'), required=False, label=_("Assign Parents"))
 
     class Meta:
         model = User
-        fields = ['last_name', 'first_name', 'email', 'password1', 'password2',  'num_telephone', 'assigned_parents']
+        fields = ['last_name', 'first_name', 'email', 'password1', 'password2',  'num_telephone', 'parents_assigned']
 
     def __init__(self, *args, **kwargs):
-        super(MagistratRegistrationForm, self).__init__(*args, **kwargs)
+        super(MagistrateRegistrationForm, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
-        self.fields['assigned_parents'].help_text = _("Press Control or Shift to select several Parents.")
+        self.fields['parents_assigned'].help_text = _("Press Control or Shift to select several Parents.")
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.telephone = self.cleaned_data['num_telephone']
-        user.is_staff = True  # Magistrats = staff
-        user.role = 'magistrat'
+        user.is_staff = True  # Magistrates = staff
+        user.role = 'magistrate'
         if commit:
             user.save()
             self.save_m2m()
-            assigned_parents = self.cleaned_data['assigned_parents']
+            assigned_parents = self.cleaned_data['parents_assigned']
             for parent in assigned_parents:
-                MagistratParent.objects.get_or_create(magistrat=user, parent=parent)
+                MagistrateParent.objects.get_or_create(magistrate=user, parent=parent)
         return user
 
 class UserRegisterForm(UserCreationForm):

@@ -21,7 +21,7 @@
 <form method="post">
     {% csrf_token %}{{form|crispy}}
     <p>{% trans "Don't have an account? Create one" %}
-        <a href="{% url 'accounts:sign_up' %}">{% trans "Here" %}</a>!
+        <a href="{% url 'accounts:register' %}">{% trans "Here" %}</a>!
     </p>
     <p>
         <a href="{% url 'accounts:password_reset' %}"><i>{% trans "Forgot Password?" %}</i></a>

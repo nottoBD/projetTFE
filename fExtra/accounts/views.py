@@ -7,21 +7,26 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Count
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import ListView, UpdateView
 
-from .forms import MagistratRegistrationForm, UserRegisterForm, UserUpdateForm
-from .models import User, MagistratParent
+from .forms import MagistrateRegistrationForm, UserRegisterForm, UserUpdateForm
+from .models import User, MagistrateParent
 
 User = get_user_model()
-
 
 class UserListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'accounts/user_list.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            # messages.error(request, _('You do not have permission to view this page.'))
+            return HttpResponseRedirect(reverse('home'))
+        return super().dispatch(request, *args, **kwargs)
 
     def get_active_status_filter(self):
         is_active_str = self.request.GET.get('is_active')
@@ -31,7 +36,7 @@ class UserListView(LoginRequiredMixin, ListView):
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            magistrats_list = [{
+            magistrates_list = [{
                 'id': mag.id,
                 'profile_image_url': self.get_image_url(mag),
                 'first_name': mag.first_name,
@@ -39,7 +44,7 @@ class UserListView(LoginRequiredMixin, ListView):
                 'email': mag.email,
                 'role': mag.role,
                 'parents_count': mag.parents_count
-            } for mag in context['magistrats']]
+            } for mag in context['magistrates']]
 
             parents_list = [{
                 'id': parent.id,
@@ -47,13 +52,13 @@ class UserListView(LoginRequiredMixin, ListView):
                 'first_name': parent.first_name,
                 'last_name': parent.last_name,
                 'email': parent.email,
-                'assigned_magistrats': [
-                    mag.magistrat.last_name for mag in parent.my_magistrats.all()
-                    if mag.magistrat.is_active or not parent.is_active
+                'magistrates_assigned': [
+                    mag.magistrate.last_name for mag in parent.magistrates_assigned.all()
+                    if mag.magistrate.is_active or not parent.is_active
                 ]  #inclusion parent & magistrat actives
             } for parent in context['parents_filtered']]
 
-            return JsonResponse({'magistrats': magistrats_list, 'parents': parents_list})
+            return JsonResponse({'magistrates': magistrates_list, 'parents': parents_list})
         else:
             return super().render_to_response(context, **response_kwargs)
 
@@ -61,19 +66,19 @@ class UserListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         is_active = self.get_active_status_filter()
 
-        magistrats_query = User.objects.filter(
-            Q(is_staff=True) | Q(is_superuser=True) | Q(role='admin') | Q(role='magistrat')
+        magistrates_query = User.objects.filter(
+            Q(is_staff=True) | Q(is_superuser=True) | Q(role='admin') | Q(role='magistrate')
         )
-        parents_query = User.objects.exclude(id__in=magistrats_query.values('id')).prefetch_related('my_magistrats__magistrat')
+        parents_query = User.objects.exclude(id__in=magistrates_query.values('id')).prefetch_related('magistrates_assigned__magistrate')
 
         if is_active is not None:
-            magistrats_query = magistrats_query.filter(is_active=is_active)
+            magistrates_query = magistrates_query.filter(is_active=is_active)
             parents_query = parents_query.filter(is_active=is_active)
 
-        context['magistrats'] = magistrats_query.annotate(parents_count=Count('assigned_parents'))
+        context['magistrates'] = magistrates_query.annotate(parents_count=Count('parents_assigned'))
 
-        if self.request.user.role == 'magistrat':
-            context['parents_filtered'] = parents_query.filter(my_magistrats__magistrat=self.request.user).distinct()
+        if self.request.user.role == 'magistrate':
+            context['parents_filtered'] = parents_query.filter(magistrates_assigned__magistrate=self.request.user).distinct()
         else:
             context['parents_filtered'] = parents_query
 
@@ -124,13 +129,13 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
 
     def has_permission(self, user_to_update, request_user):
         # admin update all except other admin
-        if request_user.is_admin:
-            return not user_to_update.is_admin or user_to_update == request_user
+        if request_user.is_superuser:
+            return not user_to_update.is_superuser or user_to_update == request_user
 
-        if request_user.is_magistrat:
+        if request_user.is_magistrate:
             if user_to_update == request_user:
                 return True
-            return MagistratParent.objects.filter(magistrat=request_user, parent=user_to_update).exists()
+            return MagistrateParent.objects.filter(magistrate=request_user, parent=user_to_update).exists()
 
         if request_user.is_parent:
             return user_to_update == request_user
@@ -148,19 +153,19 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
 @login_required
 @permission_required('accounts.add_user', raise_exception=True)
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
-def register_magistrat(request):
+def register_magistrate(request):
     if request.method == 'POST':
-        form = MagistratRegistrationForm(request.POST)
+        form = MagistrateRegistrationForm(request.POST)
         if form.is_valid():
-            magistrat = form.save()
-            messages.success(request, _('Magistrat "%s" registered successfully.' % magistrat.email))
+            magistrate = form.save()
+            messages.success(request, _('Magistrate "%s" registered successfully.' % magistrate.email))
             return redirect(reverse('accounts:user_list'))
     else:
-        form = MagistratRegistrationForm()
-    return render(request, 'registration/sign_up_magistrat.html', {'form': form})
+        form = MagistrateRegistrationForm()
+    return render(request, 'registration/register_magistrate.html', {'form': form})
 
 
-def sign_up(request):
+def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -177,15 +182,15 @@ def sign_up(request):
                 return redirect('home')
 
             else:
-                if request.user.role == 'magistrat':
-                    MagistratParent.objects.create(magistrat=request.user, parent=user)
+                if request.user.role == 'magistrate':
+                    MagistrateParent.objects.create(magistrate=request.user, parent=user)
 
                 messages.success(request, _("The parent account has been successfully created."))
                 return redirect('/accounts/list/')
 
     else:
         form = UserRegisterForm()
-    return render(request, 'registration/sign_up.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import MagistratParent
+from .models import MagistrateParent
 
 
 class UserAdmin(BaseUserAdmin):
@@ -24,10 +24,10 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-class MagistratParentAdmin(admin.ModelAdmin):
-    list_display = ('magistrat', 'parent')
-    search_fields = ('magistrat__email', 'parent__email')
+class MagistrateParentAdmin(admin.ModelAdmin):
+    list_display = ('magistrate', 'parent')
+    search_fields = ('magistrate__email', 'parent__email')
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(MagistratParent, MagistratParentAdmin)
+admin.site.register(MagistrateParent, MagistrateParentAdmin)

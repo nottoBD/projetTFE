@@ -12,25 +12,25 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
-                const magistratsTab = document.querySelector('.magistrats-list');
+                const magistratesTab = document.querySelector('.magistrates-list');
                 const parentsTab = document.querySelector('.parents-list');
 
-                magistratsTab.innerHTML = '';
+                magistratesTab.innerHTML = '';
                 parentsTab.innerHTML = '';
 
-                //Magistrat
-                data.magistrats.forEach(magistrat => {
+                //Magistrate
+                data.magistrates.forEach(magistrate => {
                     const tr = document.createElement('tr');
-                    tr.setAttribute('data-user-id', magistrat.id); // ID
-                    tr.innerHTML = `<td><img src="${magistrat.profile_image_url}" alt="Profile Image" width="30" height="30" class="rounded-circle"></td><td>${magistrat.last_name}</td><td>${magistrat.first_name}</td><td>${magistrat.email}</td><td>${magistrat.role}</td><td>${magistrat.parents_count}</td>`;
-                    magistratsTab.appendChild(tr);
+                    tr.setAttribute('data-user-id', magistrate.id); // ID
+                    tr.innerHTML = `<td><img src="${magistrate.profile_image_url}" alt="Profile Image" width="30" height="30" class="rounded-circle"></td><td>${magistrate.last_name}</td><td>${magistrate.first_name}</td><td>${magistrate.email}</td><td>${magistrate.role}</td><td>${magistrate.parents_count}</td>`;
+                    magistratesTab.appendChild(tr);
                 });
 
                 //Parent
                 data.parents.forEach(parent => {
                     const tr = document.createElement('tr');
                     tr.setAttribute('data-user-id', parent.id); //ID
-                    tr.innerHTML = `<td><img src="${parent.profile_image_url}" alt="Profile Image" width="30" height="30" class="rounded-circle"></td><td>${parent.last_name}</td><td>${parent.first_name}</td><td>${parent.email}</td><td>${parent.assigned_magistrats.join('<br>')}</td>`;
+                    tr.innerHTML = `<td><img src="${parent.profile_image_url}" alt="Profile Image" width="30" height="30" class="rounded-circle"></td><td>${parent.last_name}</td><td>${parent.first_name}</td><td>${parent.email}</td><td>${parent.magistrates_assigned.join('<br>')}</td>`;
                     parentsTab.appendChild(tr);
                 });
             })
