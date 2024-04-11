@@ -1,19 +1,36 @@
 {% extends 'fExtra/base.html' %}
 {% load static i18n crispy_forms_tags %}
+
+
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/user_update.css' %}">
 
-  <div>
-    <h2>
-      <img src="{{ user.profile_image.url }}" alt="Profile image" width="100" height="100" class="rounded-circle">
+
+<div>
+  <h2>
+    <img src="{{ user.profile_image.url }}" alt="Profile image" width="100" height="100" class="rounded-circle">
     <span>{{ user.last_name }} {{ user.first_name }}</span>
-    </h2>
-  </div>
+    <!-- switch  is_active -->
+    {% if form.fields.is_active %}
+    <div class="d-inline-block ms-3">
+      <label class="switch">
+        <input type="checkbox" id="isActiveSwitch" name="is_active_toggle" checked>
+        <span class="slider round"></span>
+      </label>
+    </div>
+    {% endif %}
+  </h2>
+</div>
 
-  <form method="post" enctype="multipart/form-data">
-    {{ form|crispy }}
-    {% csrf_token %}
-    <button type="submit" class="btn btn-outline-primary">{% trans "Save changes" %}</button>
-  </form>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% for field in form.visible_fields %}
+  {% if field.name != 'is_active' %}
+  {{ field|as_crispy_field }}
+  {% endif %}
+  {% endfor %}
+
+  <button type="submit" class="btn btn-outline-primary">{% trans "Save changes" %}</button>
+</form>
 
 {% endblock %}
-

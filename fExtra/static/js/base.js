@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach(toast => new bootstrap.Toast(toast).show());
+
     const languageSelectors = document.querySelectorAll('.language-selector');
 
     languageSelectors.forEach(function (selector) {

@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    const isActiveCheckbox = document.getElementById('isActiveFilter');
+
     function fetchUsers() {
-        fetch('/accounts/list', {
+        const isActive = isActiveCheckbox.checked;
+
+        fetch(`/accounts/list?is_active=${isActive}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
@@ -60,5 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     fetchUsers(); // initial
+    isActiveCheckbox.addEventListener('change', fetchUsers); // active filtering
+
     setInterval(fetchUsers, 10000);
 });

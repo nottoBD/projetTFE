@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.core.validators import EmailValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import assign_perm
+
 from .validations import validate_image
 
 
@@ -83,5 +83,3 @@ class MagistratParent(models.Model):
 
     def __str__(self):
         return f"{self.magistrat.email} assigned to {self.parent.email}"
-
-

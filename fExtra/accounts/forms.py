@@ -14,13 +14,20 @@ User = get_user_model()
 class UserUpdateForm(UserChangeForm):
     password = None
     profile_image = forms.ImageField(widget=forms.FileInput, required=False)
-
+    is_active_toggle = forms.BooleanField(label=_("Toggle Active Status"), required=False, help_text=_("Check this box and save to toggle the user's active status."))
     class Meta:
         model = User
-        fields = ['last_name', 'first_name', 'email', 'date_of_birth', 'telephone', 'address', 'profile_image']
-        widgets = {
-            'date_of_birth': forms.DateInput(attrs={'type': 'text', 'format': '%d/%m/%Y'}),
-        }
+        fields = ['is_active_toggle', 'last_name', 'first_name', 'email', 'date_of_birth', 'telephone', 'address', 'profile_image', ]
+        widgets = {'date_of_birth': forms.DateInput(attrs={'type': 'text', 'format': '%d/%m/%Y'}), }
+
+    def __init__(self, *args, **kwargs):
+        self.request_user = kwargs.pop('request_user', None)
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        target_user = self.instance
+
+        # Conditionally remove the is_active field
+        if not self.request_user.is_superuser or target_user.is_superuser:
+            self.fields.pop('is_active_toggle', None)
 
     def clean_profile_image(self):
         profile_image = self.cleaned_data.get('profile_image')
@@ -35,7 +42,6 @@ class UserUpdateForm(UserChangeForm):
         return profile_image
 
 
-# OKOKOK
 class MagistratRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, label=_('First Name'), required=True)
     last_name = forms.CharField(max_length=150, label=_('Last Name'), required=True)
@@ -94,4 +100,3 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["gender", "national_number", "last_name", "first_name", "email", "date_of_birth", "address", "telephone", "password1", "password2"]
-

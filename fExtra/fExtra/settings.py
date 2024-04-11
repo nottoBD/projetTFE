@@ -34,7 +34,7 @@ env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
 SECRET_KEY = env('SECRET_KEY')
 
-print(list(env.ENVIRON.keys()))# !
+# print(list(env.ENVIRON.keys())) # !
 
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
@@ -73,8 +73,9 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'accounts.User'
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend', # Default Django auth
+    'guardian.backends.ObjectPermissionBackend', # Guardian permission
+    'accounts.backends.CustomUserModelBackend',  # Active feature
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
