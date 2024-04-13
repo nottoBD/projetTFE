@@ -23,16 +23,14 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-env = environ.Env()
-environ.Env.read_env(env_file=BASE_DIR / ".env")
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = '!rjfh@hm-kfot41o1fx&-x^qn4&ob1u(j^a1)e)uij%j(ktkzv'
 
 # print(list(env.ENVIRON.keys())) # !
 
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = False
 
 
 
@@ -42,7 +40,7 @@ DEBUG = env.bool("DEBUG", default=False)
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['fextra.herokuapp.com', 'tfe-fextra.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['fextra-3229f1232ac3.herokuapp.com', 'fextra.herokuapp.com', 'tfe-fextra.herokuapp.com', 'localhost', '127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
