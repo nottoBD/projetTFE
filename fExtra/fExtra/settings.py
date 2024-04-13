@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+import django_heroku
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 import environ
@@ -20,12 +21,7 @@ import environ
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'accounts/static',
-    BASE_DIR / 'static',
-]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -49,7 +45,7 @@ DEBUG = env.bool("DEBUG", default=False)
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['fextra/herokuapp.com']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -131,9 +127,10 @@ WSGI_APPLICATION = 'fExtra.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbtest',
-        'USER': 'usertest',
-        'PASSWORD': 'usertest',
+        'NAME': 'debumjdfpva8jp',
+        'USER': 'jktidbtbjmcsmz',
+        'PASSWORD': 'a9f441b302859b91c0b8b88b59c9294cab53e66b993d60cfd18bd0d20878913e',
+        'HOST': 'ec2-34-250-252-161.eu-west-1.compute.amazonaws.com',
         'PORT': '5432'
     }
 }
@@ -174,6 +171,15 @@ MESSAGE_TAGS = {
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"
+django_heroku.settings(locals())
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'accounts/static',
+    BASE_DIR / 'static',
+    ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
