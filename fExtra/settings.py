@@ -28,7 +28,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # print(list(env.ENVIRON.keys())) # !
 
@@ -127,10 +127,10 @@ WSGI_APPLICATION = 'fExtra.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'debumjdfpva8jp',
-        'USER': 'jktidbtbjmcsmz',
-        'PASSWORD': 'a9f441b302859b91c0b8b88b59c9294cab53e66b993d60cfd18bd0d20878913e',
-        'HOST': 'ec2-34-250-252-161.eu-west-1.compute.amazonaws.com',
+        'NAME': 'da7j83t1pptldd',
+        'USER': 'humxhvqvueqfru',
+        'PASSWORD': '6f43f22aff941c48c4518973b380cc9ea185578b2e0ea468a4db8e76a9da5ed3',
+        'HOST': 'ec2-34-251-233-253.eu-west-1.compute.amazonaws.com',
         'PORT': '5432'
     }
 }
