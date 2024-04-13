@@ -42,7 +42,7 @@ DEBUG = env.bool("DEBUG", default=False)
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['fextra.herokuapp.com', 'tfe-fextra.herokuapp.com', 'localhost', '127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
