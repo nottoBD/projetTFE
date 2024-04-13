@@ -27,8 +27,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls', namespace='accounts')),
     re_path(r'^i18n/setlang/$', set_language, name='set_language'),
     path('', views.home, name='home'),
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

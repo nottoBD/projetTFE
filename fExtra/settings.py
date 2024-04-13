@@ -30,7 +30,7 @@ SECRET_KEY = '!rjfh@hm-kfot41o1fx&-x^qn4&ob1u(j^a1)e)uij%j(ktkzv'
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = False
+DEBUG = True
 
 
 
@@ -81,6 +81,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 LANGUAGES = [
@@ -119,17 +120,25 @@ WSGI_APPLICATION = 'fExtra.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'da7j83t1pptldd',
+#         'USER': 'humxhvqvueqfru',
+#         'PASSWORD': '6f43f22aff941c48c4518973b380cc9ea185578b2e0ea468a4db8e76a9da5ed3',
+#         'HOST': 'ec2-34-251-233-253.eu-west-1.compute.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'da7j83t1pptldd',
-        'USER': 'humxhvqvueqfru',
-        'PASSWORD': '6f43f22aff941c48c4518973b380cc9ea185578b2e0ea468a4db8e76a9da5ed3',
-        'HOST': 'ec2-34-251-233-253.eu-west-1.compute.amazonaws.com',
+        'NAME': 'dbtest',
+        'USER': 'usertest',
+        'PASSWORD': 'usertest',
         'PORT': '5432'
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -167,7 +176,6 @@ MESSAGE_TAGS = {
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
