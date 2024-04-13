@@ -23,11 +23,8 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 env = environ.Env()
-environ.Env.read_env(env_file=str(BASE_DIR / ".env"))
+environ.Env.read_env(env_file=BASE_DIR / ".env")
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # print(list(env.ENVIRON.keys())) # !
@@ -45,7 +42,7 @@ DEBUG = env.bool("DEBUG", default=False)
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['fextra/herokuapp.com']
+ALLOWED_HOSTS = ['tfe-fextra.herokuapp.com']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -172,14 +169,12 @@ MESSAGE_TAGS = {
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = "/static/"
-django_heroku.settings(locals())
 
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'accounts', 'static'),
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -187,4 +182,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ANONYMOUS_USER_NAME = None
