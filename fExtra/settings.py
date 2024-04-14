@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 import django_heroku
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 import environ
@@ -23,15 +24,22 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = '!rjfh@hm-kfot41o1fx&-x^qn4&ob1u(j^a1)e)uij%j(ktkzv'
 
 # print(list(env.ENVIRON.keys())) # !
 
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
+def get_env_variable(var_name):
+    """ Variables d'environnement Heroku
+    $ heroku config:set DB_NAME=name   """
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = f"Set the {var_name} environment variable"
+        raise ImproperlyConfigured(error_msg)
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,7 +48,7 @@ DEBUG = True
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['fextra-3229f1232ac3.herokuapp.com', 'fextra.herokuapp.com', 'tfe-fextra.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['fextra-3229f1232ac3.herokuapp.com', 'fextra.herokuapp.com', 'localhost', '127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -117,30 +125,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fExtra.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY')
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'da7j83t1pptldd',
-#         'USER': 'humxhvqvueqfru',
-#         'PASSWORD': '6f43f22aff941c48c4518973b380cc9ea185578b2e0ea468a4db8e76a9da5ed3',
-#         'HOST': 'ec2-34-251-233-253.eu-west-1.compute.amazonaws.com',
-#         'PORT': '5432'
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbtest',
-        'USER': 'usertest',
-        'PASSWORD': 'usertest',
-        'PORT': '5432'
+        'NAME': get_env_variable('DATABASE_NAME'),
+        'USER': get_env_variable('DATABASE_USER'),
+        'PASSWORD': get_env_variable('DATABASE_PASSWORD'),
+        'HOST': get_env_variable('DATABASE_HOST'),
+        'PORT': get_env_variable('DATABASE_PORT'),
     }
 }
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -165,13 +162,13 @@ USE_I18N = True
 USE_TZ = True
 
 #TODO: toast & notification
-MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
-}
+# MESSAGE_TAGS = {
+#     messages.DEBUG: 'alert-info',
+#     messages.INFO: 'alert-info',
+#     messages.SUCCESS: 'alert-success',
+#     messages.WARNING: 'alert-warning',
+#     messages.ERROR: 'alert-danger',
+# }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
