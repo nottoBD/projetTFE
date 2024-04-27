@@ -1,0 +1,33 @@
+{% extends 'fExtra/base.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
+
+{% block content %}
+
+
+{% for message in messages %}
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <strong class="me-auto">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        {{ message }}
+    </div>
+</div>
+{% endfor %}
+
+<form method="post">
+    {% csrf_token %}{{form|crispy}}
+    <p>{% trans "Don't have an account? Create one" %}
+        <a href="{% url 'accounts:register' %}">{% trans "Here" %}</a>!
+    </p>
+    <p>
+        <a href="{% url 'accounts:password_reset' %}"><i>{% trans "Forgot Password?" %}</i></a>
+    </p>
+    <button type="submit" class="btn btn-outline-primary">{% trans "Login" %}</button>
+</form>
+
+{% endblock %}
+
