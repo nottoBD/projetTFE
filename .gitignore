@@ -6,9 +6,11 @@ venv/
 env/
 __pycache__/
 *.pyc
+.env*
 static/
 media/
-fExtra/.env
+.env
 .idea/
 .vscode/
 *.{log,tmp,temp}
+/staticfiles/

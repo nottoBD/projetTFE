@@ -1,14 +1,15 @@
 # Installation locale
 ## Pré-requis
 - Invite de commande windows en Administrateur
-- Python installé (3.11)
+- Python installé (3.11.8)
 - Git installé
 - postgresql configuré et **lancé**
 - copier le lien du repo: **https://github.com/nottoBD/projetTFE.git**
 - n'importe quel dossier dans lequel placer le repository
   
 ## PostgreSQL
-Option 1: remplacer dans fExtra/fExtra/settings.py les coordonnées postgresql par les votres (NAME, USER, PASSWORD) 
+Option 1: remplacer dans fExtra/settings.py les coordonnées postgresql par les votres (NAME, USER, PASSWORD) 
+
 
 **Option 2:** respecter les coordonnées par défaut (configurer ton postgresql selon l'image suivante)
 
