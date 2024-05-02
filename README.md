@@ -1,68 +1,39 @@
-# Projet TFE - Gestion Frais extraordinaires
+# Installation locale
+## Pré-requis
+- Invite de commande windows en Administrateur
+- Python installé (3.11.8)
+- Git installé
+- postgresql configuré et **lancé**
+- copier le lien du repo: **https://github.com/nottoBD/projetTFE.git**
+- n'importe quel dossier dans lequel placer le repository
+  
+## PostgreSQL
+Option 1: remplacer dans fExtra/settings.py les coordonnées postgresql par les votres (NAME, USER, PASSWORD) 
+
+**Option 2:** respecter les coordonnées par défaut (configurer ton postgresql selon l'image suivante)
+
+![318116503-c8f9592d-bd67-4c6a-a732-dc1d587f1ff3](https://github.com/nottoBD/projetTFE/assets/94763728/0d526b67-3377-4f8c-abda-466990ca8a86)
+
+## Video d'installation (Linux)
+
+https://github.com/nottoBD/projetTFE/assets/94763728/5c32c0d4-c302-4f28-b5c0-8451c0da0eb1
 
 
-# Mise en place
-1 cloner repo, ouvrir le dossier racine, CMD admin
+## Commandes (Windows)
 
-## postgresql 
-(settings.py contient les informations hardcodées)
-```
-cd "C:\Program Files\PostgreSQL\15\bin"
-
-createuser --username=postgres --no-superuser --createdb --no-createrole usertest
-
-createdb --owner=usertest dbtest --username=postgres
-
-psql -U postgres
-```
-
-```
-ALTER USER usertest WITH PASSWORD 'usertest';
-GRANT ALL PRIVILEGES ON DATABASE dbtest TO usertest;
-\q
-```
-
-## environnement virtuel
-repo, ouvrir le dossier racine, CMD admin
-```
-python -m venv env
-
-.\env\Scripts\activate
-
+``` 
+git clone -b David https://github.com/nottoBD/projetTFE.git
+cd projetTFE\fExtra
+python -m venv ..\env
+..\env\Scripts\activate
 pip install --upgrade pip
-
-pip install -r requirements.txt
-```
-
-## variable env
-dans le dossier racine doit etre écrit le fichier .env comme ceci
-```
-SECRET_KEY='gvfdu$XXXXXXXXXXXXXXXXXXXXXXX'
-DEBUG=True
-```
-la clé est retirée du versioning de settings.py
-le module django-environ appel .env dedans
-
-## Django
-### Se placer dans la branche dev au préalable pour avoir accès au "Hello World!"
-```
-git checkout dev 
-```
-### Pour faire migrer les changements dans votre base de données :
-```
+pip install -r ..\requirements.txt
+python manage.py makemigrations accounts
 python manage.py makemigrations
 python manage.py migrate
-```
-### Load data test avec fixtures
-```
-python manage.py loaddata core/fixtures/fixtures.json
-```
-### Créer un super user (accès localhost:8000/admin)
-```
+python manage.py loaddata testdata.json 
 python manage.py createsuperuser
-```
-## Lancer "Hello World!"
-Dossier racine, dans l'environnement virtuel, quand pgSQL et pip sont prets
-```
+
 python manage.py runserver
-```
+
+``` 
