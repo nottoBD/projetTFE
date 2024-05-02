@@ -24,17 +24,15 @@ https://github.com/nottoBD/projetTFE/assets/94763728/5c32c0d4-c302-4f28-b5c0-845
 
 ``` 
 git clone -b David https://github.com/nottoBD/projetTFE.git
-cd projetTFE\fExtra
-python -m venv ..\env
-..\env\Scripts\activate
+cd projetTFE
+python -m venv env
+env\Scripts\activate
 pip install --upgrade pip
-pip install -r ..\requirements.txt
+pip install -r requirements.txt
 python manage.py makemigrations accounts
 python manage.py makemigrations
 python manage.py migrate
-python manage.py loaddata testdata.json 
 python manage.py createsuperuser
-
 python manage.py runserver
 
 ``` 
