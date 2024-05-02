@@ -10,6 +10,7 @@
 ## PostgreSQL
 Option 1: remplacer dans fExtra/settings.py les coordonnées postgresql par les votres (NAME, USER, PASSWORD) 
 
+
 **Option 2:** respecter les coordonnées par défaut (configurer ton postgresql selon l'image suivante)
 
 ![318116503-c8f9592d-bd67-4c6a-a732-dc1d587f1ff3](https://github.com/nottoBD/projetTFE/assets/94763728/0d526b67-3377-4f8c-abda-466990ca8a86)

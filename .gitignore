@@ -7,6 +7,9 @@ env/
 __pycache__/
 *.pyc
 .env*
+static/
+media/
+.env
 .idea/
 .vscode/
 *.{log,tmp,temp}
