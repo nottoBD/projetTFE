@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError
 import magic
+from django.core.exceptions import ValidationError
 
 # validations.py
 def validate_image(file):

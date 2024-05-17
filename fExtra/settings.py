@@ -16,6 +16,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 import environ
+from dotenv.main import load_dotenv
 
 # Run python manage.py collectstatic if you are moving to production. This command collects static files from your apps and any other directories specified in STATICFILES_DIRS into the directory specified by STATIC_ROOT.
 # During development, Django's development server automatically serves static files found in your apps' static directories and those specified in STATICFILES_DIRS, provided you have DEBUG = True in your settings.py.
@@ -33,10 +34,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 
 def get_env_variable(var_name):
+    load_dotenv()
     """ Variables d'environnement Heroku
     $ heroku config:set DB_NAME=name   """
     try:
-        return os.environ[var_name]
+        return os.getenv(var_name)
     except KeyError:
         error_msg = f"Set the {var_name} environment variable"
         raise ImproperlyConfigured(error_msg)

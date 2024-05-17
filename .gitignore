@@ -6,7 +6,7 @@ venv/
 env/
 __pycache__/
 *.pyc
-.env*
+fExtra/.env
 static/
 media/
 .env
