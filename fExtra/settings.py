@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-import django_heroku
+import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
@@ -126,8 +126,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fExtra.wsgi.application'
 
-SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY')
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -138,16 +136,7 @@ SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY')
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': get_env_variable('DATABASE_NAME'),
-        'USER': get_env_variable('DATABASE_USER'),
-        'PASSWORD': get_env_variable('DATABASE_PASSWORD'),
-        'HOST': get_env_variable('DATABASE_HOST'),
-        'PORT': get_env_variable('DATABASE_PORT'),
-    }
-}
+DATABASES = {'default': dj_database_url.parse('DATABASE_URL')}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
