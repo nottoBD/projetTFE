@@ -11,10 +11,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-
-import dj_database_url
+import django_heroku
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
+from django.contrib.messages import constants as messages
 import environ
+from dotenv.main import load_dotenv
+
+# Run python manage.py collectstatic if you are moving to production. This command collects static files from your apps and any other directories specified in STATICFILES_DIRS into the directory specified by STATIC_ROOT.
+# During development, Django's development server automatically serves static files found in your apps' static directories and those specified in STATICFILES_DIRS, provided you have DEBUG = True in your settings.py.
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +31,19 @@ SECRET_KEY = 'gvfdu$XXXXXXXXXXXXXXXXXXXXXXX'
 # SECURITY WARNING: no DEBUG in production. Key stored locally .env
 # SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = True
+
+def get_env_variable(var_name):
+    load_dotenv()
+    """ Variables d'environnement Heroku
+    $ heroku config:set DB_NAME=name   """
+    try:
+        return os.getenv(var_name)
+    except KeyError:
+        error_msg = f"Set the {var_name} environment variable"
+        raise ImproperlyConfigured(error_msg)
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -43,9 +61,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.MainConfig',
+    'accounts.apps.AccountsConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'guardian',
+]
+
+AUTH_USER_MODEL = 'accounts.User'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', # Default Django auth
+    'guardian.backends.ObjectPermissionBackend', # Guardian permission
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -60,8 +86,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware', # i18n langages
+    'django.middleware.locale.LocaleMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LANGUAGES = [
     ('en', _('English')),
@@ -81,7 +110,7 @@ ROOT_URLCONF = 'fExtra.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,8 +126,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fExtra.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY')
 
 # DATABASES = {
 #     'default': {
@@ -111,7 +139,14 @@ WSGI_APPLICATION = 'fExtra.wsgi.application'
 # }
 
 DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': get_env_variable('DATABASE_NAME'),
+        'USER': get_env_variable('DATABASE_USER'),
+        'PASSWORD': get_env_variable('DATABASE_PASSWORD'),
+        'HOST': get_env_variable('DATABASE_HOST'),
+        'PORT': get_env_variable('DATABASE_PORT'),
+    }
 }
 
 # Password validation
@@ -141,15 +176,32 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
+#TODO: toast & notification
+# MESSAGE_TAGS = {
+#     messages.DEBUG: 'alert-info',
+#     messages.INFO: 'alert-info',
+#     messages.SUCCESS: 'alert-success',
+#     messages.WARNING: 'alert-warning',
+#     messages.ERROR: 'alert-danger',
+# }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/home'
-LOGOUT_REDIRECT_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/login'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+ANONYMOUS_USER_NAME = None
