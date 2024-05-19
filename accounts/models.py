@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import BaseUserManager, PermissionsMixin, AbstractUser
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -28,7 +28,7 @@ class MyUserManager(BaseUserManager):
         return self.create_user(email, password=password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractUser, PermissionsMixin):
     ROLE_CHOICES = [
         ('administrator', 'Administrator'),
         ('magistrate', 'Magistrate'),
