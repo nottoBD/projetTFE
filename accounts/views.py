@@ -175,14 +175,12 @@ def register(request):
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 messages.success(request, _("Your account has been created! You are now logged in."))
                 return redirect('home')
-
             else:
                 if request.user.role == 'magistrate':
                     MagistrateParent.objects.create(magistrate=request.user, parent=user)
 
                 messages.success(request, _("The parent account has been successfully created."))
                 return redirect('/accounts/list/')
-
     else:
         form = UserRegisterForm()
     return render(request, 'registration/register.html', {'form': form})

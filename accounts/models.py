@@ -69,6 +69,7 @@ class User(AbstractUser, PermissionsMixin):
 
 
 class MagistrateParent(models.Model):
+    objects = None
     magistrate = models.ForeignKey(User, related_name='parents_assigned', on_delete=models.CASCADE)
     parent = models.ForeignKey(User, related_name='magistrates_assigned', on_delete=models.CASCADE)
 

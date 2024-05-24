@@ -1,3 +1,5 @@
+import re
+
 import magic
 from django import forms
 from django.contrib.auth import get_user_model
@@ -102,6 +104,25 @@ class UserRegisterForm(UserCreationForm):
         if len(unformatted_number) != 11:
             raise ValidationError(_("National number must be exactly 11 digits long."))
         return unformatted_number
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if len(password) < 8:
+            raise ValidationError('The password must be at least 8 characters long.')
+        return password
+
+    def clean_confirm_password(self):
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+        if password != confirm_password:
+            raise ValidationError('The passwords do not match.')
+        return confirm_password
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise ValidationError('Enter a valid email address.')
+        return email
 
     def __init__(self, *args, **kwargs):
         super(UserRegisterForm, self).__init__(*args, **kwargs)
