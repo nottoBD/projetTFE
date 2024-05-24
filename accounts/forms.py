@@ -92,14 +92,22 @@ class MagistrateRegistrationForm(UserCreationForm):
                 MagistrateParent.objects.get_or_create(magistrate=user, parent=parent)
         return user
 
+
 class UserRegisterForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ["gender", "national_number", "last_name", "first_name", "email", "date_of_birth", "address", "telephone", "password1", "password2"]
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'})
+        }
+
     gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female'), ('X', 'Other')], required=False, label=_("Gender"))
     national_number = forms.CharField(max_length=15, required=False, label=_("National Number"))
     last_name = forms.CharField(max_length=150, required=True, label=_("Last Name"))
     first_name = forms.CharField(max_length=30, required=True, label=_("First Name"))
     telephone = forms.CharField(max_length=16, required=False, label=_("Telephone"))
     address = forms.CharField(widget=forms.TextInput, required=False, label=_("Address"), max_length=70)
-    date_of_birth = forms.DateField(widget=DateInput(attrs={'type': 'text'}, format='%d/%m/%Y'), input_formats=['%d/%m/%Y'], required=True, help_text=_('Format: DD/MM/YYYY'))
+    date_of_birth = forms.DateField(widget=DateInput(attrs={'type': 'date'}, format='%d/%m/%Y'), input_formats=['%d/%m/%Y'], required=True, help_text=_('Format: DD/MM/YYYY'))
 
     def clean_national_number(self):
         national_number = self.cleaned_data.get('national_number')
@@ -134,6 +142,3 @@ class UserRegisterForm(UserCreationForm):
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
 
-    class Meta:
-        model = User
-        fields = ["gender", "national_number", "last_name", "first_name", "email", "date_of_birth", "address", "telephone", "password1", "password2"]

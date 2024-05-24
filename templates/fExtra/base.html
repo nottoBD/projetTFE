@@ -53,7 +53,7 @@
 
 <div class="container-fluid"> <!-- Adjust padding to avoid overlap with navbar -->
     <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 bg-dark">
             <div class="d-flex flex-column align-items-center align-items-sm-start px-2 pt-2 text-white min-vh-100">
                 <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 </a>
@@ -61,12 +61,12 @@
                     {% if not request.user.is_authenticated %}
                     <li class="nav-item">
                         <a href="/accounts/login" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi bi-journal-check"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Sign-in" %}</span>
+                            <i class="fs-4 bi bi-journal-check"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Login" %}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="/accounts/register" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi bi-journal-plus"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Sign-up" %}</span>
+                            <i class="fs-4 bi bi-journal-plus"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Register" %}</span>
                         </a>
                     </li>
                     {% endif %}
@@ -76,6 +76,21 @@
                             <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Home" %}</span>
                         </a>
                     </li>
+                    {% if request.user.role == 'parent' or request.user.role == 'magistrate' %}
+                    <li>
+                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-currency-dollar"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Payments" %}</span>
+                        </a>
+                        <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                            <li class="w-100">
+                                <a href="/Payments/add-doc" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Payments" %}</a>
+                            </li>
+                            <li>
+                                <a href="/Payments/history" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "History" %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     {% if request.user.is_staff %}
                     <li>
                         <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
@@ -89,10 +104,7 @@
                                 <a href="/accounts/register" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Parent" %}</a>
                             </li>
                             <li>
-                                <a href="/accounts/register-magistrate" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Magistrate" %}</a>
-                            </li>
-                            <li>
-                                <a href="/accounts/update/{{ request.user.id }}/" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Profile" %}</a>
+                                <a href="/accounts/register-magistrate" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add" %} magistrat</a>
                             </li>
                         </ul>
                     </li>
