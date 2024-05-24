@@ -93,7 +93,7 @@ class UserListView(LoginRequiredMixin, ListView):
 
 
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = User
+    model = get_user_model()
     template_name = 'accounts/user_update.html'
     form_class = UserUpdateForm
     success_url = reverse_lazy('accounts:user_list')
@@ -115,6 +115,12 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
+        if not self.request.user.is_superuser:
+            # Assurez-vous que le rôle n'a pas été modifié
+            if 'role' in form.changed_data:
+                form.add_error('role', "Vous n'êtes pas autorisé à modifier le rôle.")
+                return self.form_invalid(form)
+
         response = super().form_valid(form)
         related_users_ids = set(form.cleaned_data.get('related_users').values_list('id', flat=True))
 
@@ -133,7 +139,8 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         relationships_to_add = related_users_ids - current_relations
         relationships_to_remove = current_relations - related_users_ids
 
-        MagistrateParent.objects.filter(**{own_field: self.object, relationship_field + '_id__in': relationships_to_remove}).delete()
+        MagistrateParent.objects.filter(
+            **{own_field: self.object, relationship_field + '_id__in': relationships_to_remove}).delete()
 
         User = get_user_model()
         for user_id in relationships_to_add:

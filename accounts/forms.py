@@ -13,35 +13,38 @@ from .models import MagistrateParent
 User = get_user_model()
 
 
-class UserUpdateForm(UserChangeForm):
-    password = None
-    profile_image = forms.ImageField(widget=forms.FileInput, required=False)
-    is_active_toggle = forms.BooleanField(label=_("Toggle Active Status"), required=False, help_text=_("Check this box and save to toggle the user's active status."))
-    related_users = forms.ModelMultipleChoiceField(queryset=User.objects.none(), required=False, label=_("Assign Users"))
-
+class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['role', 'is_active_toggle', 'last_name', 'first_name', 'email', 'date_of_birth', 'telephone', 'address', 'profile_image', ]
-        widgets = {'date_of_birth': forms.DateInput(attrs={'type': 'text', 'format': '%d/%m/%Y'})}
+        fields = ['last_name', 'first_name', 'email', 'date_of_birth', 'telephone', 'address', 'profile_image', 'related_users']  # Excluez 'role' ici
+
+    related_users = forms.ModelMultipleChoiceField(
+        queryset=User.objects.none(),
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request_user = kwargs.pop('request_user', None)
         super(UserUpdateForm, self).__init__(*args, **kwargs)
         target_user = self.instance
 
-        if target_user.role in ['parent', 'magistrate']:
-            if target_user.role == 'parent':
-                queryset = User.objects.filter(role='magistrate')
-                assigned = MagistrateParent.objects.filter(parent=target_user).values_list('magistrate__id', flat=True)
-            else:  # magistrate
-                queryset = User.objects.filter(role='parent')
-                assigned = MagistrateParent.objects.filter(magistrate=target_user).values_list('parent__id', flat=True)
-
-            self.fields['related_users'].queryset = queryset
-            self.fields['related_users'].initial = assigned
-            self.fields['related_users'].label = _("Assigned Magistrates" if target_user.role == 'parent' else "Assigned Parents")
+        if target_user.role == 'parent':
+            queryset = User.objects.filter(role='magistrate')
+            assigned = MagistrateParent.objects.filter(parent=target_user).values_list('magistrate__id', flat=True)
+        elif target_user.role == 'magistrate':
+            queryset = User.objects.filter(role='parent')
+            assigned = MagistrateParent.objects.filter(magistrate=target_user).values_list('parent__id', flat=True)
         else:
-            self.fields.pop('related_users')
+            queryset = User.objects.none()
+            assigned = []
+
+        self.fields['related_users'].queryset = queryset
+        self.fields['related_users'].initial = assigned
+        self.fields['related_users'].label = _("Assigned Magistrates" if target_user.role == 'parent' else "Assigned Parents")
+
+        # Exclure le champ role si l'utilisateur n'est pas superutilisateur
+        if not self.request_user.is_superuser:
+            self.fields.pop('role', None)
 
 
     def clean_profile_image(self):
