@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Count
-from django.http import JsonResponse, Http404, HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import ListView, UpdateView
@@ -175,14 +175,12 @@ def register(request):
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 messages.success(request, _("Your account has been created! You are now logged in."))
                 return redirect('home')
-
             else:
                 if request.user.role == 'magistrate':
                     MagistrateParent.objects.create(magistrate=request.user, parent=user)
 
                 messages.success(request, _("The parent account has been successfully created."))
                 return redirect('/accounts/list/')
-
     else:
         form = UserRegisterForm()
     return render(request, 'registration/register.html', {'form': form})
