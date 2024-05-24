@@ -9,6 +9,7 @@ from fExtra import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('Payments/', include('Payments.urls', namespace='Payments')),
     re_path(r'^i18n/setlang/$', set_language, name='set_language'),
     path('', views.home, name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
