@@ -1,7 +1,6 @@
 {% extends 'fExtra/base.html' %}
 {% load static i18n %}
 
-
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'Payments/css/history.css' %}">
@@ -15,6 +14,37 @@
                         <h2 class="card-title mb-0">{% trans "Payments List" %}</h2>
                         <a href="{% url 'Payments:add-doc' %}" class="btn btn-primary">{% trans "Add Payment Document" %}</a>
                     </div>
+                    <!-- Filter form -->
+                    <form method="get" class="mb-3">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <label for="parent">{% trans "Parent" %}</label>
+                                <select id="parent" name="parent" class="form-control">
+                                    <option value="">{% trans "All" %}</option>
+                                    {% for value, label in filter_form.fields.parent.choices %}
+                                        <option value="{{ value }}" {% if value == filter_form.data.parent %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="date_order">{% trans "Order by Date" %}</label>
+                                <select id="date_order" name="date_order" class="form-control">
+                                    <option value="">{% trans "Default" %}</option>
+                                    <option value="asc" {% if filter_form.data.date_order == "asc" %}selected{% endif %}>{% trans "Ascending" %}</option>
+                                    <option value="desc" {% if filter_form.data.date_order == "desc" %}selected{% endif %}>{% trans "Descending" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="has_document">{% trans "Has Document" %}</label>
+                                <select id="has_document" name="has_document" class="form-control">
+                                    <option value="all" {% if filter_form.data.has_document == "all" %}selected{% endif %}>{% trans "All" %}</option>
+                                    <option value="yes" {% if filter_form.data.has_document == "yes" %}selected{% endif %}>{% trans "With Document" %}</option>
+                                    <option value="no" {% if filter_form.data.has_document == "no" %}selected{% endif %}>{% trans "Without Document" %}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-secondary mt-3">{% trans "Apply Filters" %}</button>
+                    </form>
                     <!-- Payments table -->
                     <table class="table">
                         <thead>
@@ -28,17 +58,13 @@
                         <tbody class="payments-list">
                             {% for payment in payments %}
                                 <tr class="payment-item">
-                                    <td>
-                                        {% with user=payment.user %}
-                                            {{ user.first_name }}
-                                        {% endwith %}
-                                    </td>
+                                    <td>{{ payment.user.first_name }}</td>
                                     <td>{{ payment.date }}</td>
-                                    <td>{{ payment.amount }}</td>
+                                    <td>{{ payment.amount }} €</td>
                                     <td>
                                         {% if payment.document %}
                                             <div class="document-preview">
-                                                <a href="{{ payment.document.url }}" class="btn btn-warning" target="_blank" title= '{% trans "Document Preview" %}'>
+                                                <a href="{{ payment.document.url }}" class="btn btn-warning" target="_blank" title='{% trans "Document Preview" %}'>
                                                     {% trans "View" %}
                                                 </a>
                                                 <div class="tooltip">
@@ -59,18 +85,29 @@
         <div class="col-md-3">
             <div class="card mb-4">
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered mt-4">
                         <thead>
                             <tr>
-                                <th>{% trans "Total Amount" %}</th>
+                                <th>{% trans "My Total" %}</th>
+                                <th>{% trans "Partner Total" %}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ total_amount }}</td>
+                                <td>{{ user_total_amount }} €</td>
+                                <td>{{ partner_total_amount }} €</td>
                             </tr>
                         </tbody>
                     </table>
+                    <p>
+                        {% if favor == "user" %}
+                            {{ difference }} € {% trans "in your favor" %}
+                        {% elif favor == "partner" %}
+                            {{ difference }} € {% trans "in favor of partner" %}
+                        {% else %}
+                            {% trans "neither" %}
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

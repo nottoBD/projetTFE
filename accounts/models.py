@@ -47,6 +47,7 @@ class User(AbstractUser, PermissionsMixin):
     national_number_raw = models.CharField(max_length=11, blank=True, null=True)
     national_number = models.CharField(max_length=15, blank=True, null=True)
     profile_image = models.ImageField(upload_to='profile_images/', default='profile_images/default.jpg', validators=[validate_image])
+    partner = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='partner_user')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
