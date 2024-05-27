@@ -82,12 +82,22 @@
                             <i class="fs-4 bi-currency-dollar"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Payments" %}</span>
                         </a>
                         <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                            {% if request.user.role == 'magistrate' %}
+                            <li class="w-100">
+                                <a href="/Payments/create_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add folder" %}</a>
+                            </li>
+                            <li>
+                                <a href="/Payments/list_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Folder list" %}</a>
+                            </li>
+                            {% endif %}
+                            {% if request.user.role == 'parent' %}
                             <li class="w-100">
                                 <a href="/Payments/add-doc" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Payments" %}</a>
                             </li>
                             <li>
                                 <a href="/Payments/history" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "History" %}</a>
                             </li>
+                            {% endif %}
                         </ul>
                     </li>
                     {% endif %}

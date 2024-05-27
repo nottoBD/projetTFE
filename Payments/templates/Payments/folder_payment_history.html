@@ -1,0 +1,85 @@
+{% extends 'fExtra/base.html' %}
+{% load static i18n %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'Payments/css/history.css' %}">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="card-title mb-0">{% trans "Payments List" %}</h2>
+                        <a href="{% url 'Payments:add-doc-magistrate' folder_id=folder.id %}" class="btn btn-primary">{% trans "Add Payment Document" %}</a>
+                    </div>
+                    <!-- Payments table -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Username" %}</th>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "Amount" %}</th>
+                                <th>{% trans "Document" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="payments-list">
+                            {% for payment in payments %}
+                                <tr class="payment-item">
+                                    <td>
+                                        {% with user=payment.user %}
+                                            {{ user.first_name }} {{ user.last_name }}
+                                        {% endwith %}
+                                    </td>
+                                    <td>{{ payment.date }}</td>
+                                    <td>{{ payment.amount }}</td>
+                                    <td>
+                                        {% if payment.document %}
+                                            <div class="document-preview">
+                                                <a href="{{ payment.document.url }}" class="btn btn-warning" target="_blank" title= '{% trans "Document Preview" %}'>
+                                                    {% trans "View" %}
+                                                </a>
+                                                <div class="tooltip">
+                                                    <img src="{{ payment.document.url }}" alt='{% trans "Document Preview" %}' style="width: 100px;">
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {% trans "No Document" %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Total Amount" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ folder.parent1.first_name }} {{ folder.parent1.last_name }} : {{ parent1_total }} €</td>
+                            </tr>
+                            <tr>
+                                <td>{{ folder.parent2.first_name }} {{ folder.parent2.last_name }} : {{ parent2_total }} €</td>
+                            </tr>
+                            <tr>
+                                <td>{{ difference }} € {% trans "In Favor Of" %}: {{ in_favor_of.first_name }} {{ in_favor_of.last_name }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
