@@ -12,7 +12,9 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="card-title mb-0">{% trans "Payments List" %}</h2>
+                        {% if request.user.role == 'lawyer' or equest.user.role == 'parent' %}
                         <a href="{% url 'Payments:add-doc-magistrate' folder_id=folder.id %}" class="btn btn-primary">{% trans "Add Payment Document" %}</a>
+                        {% endif %}
                     </div>
                     <!-- Payments table -->
                     <table class="table">
@@ -72,7 +74,7 @@
                                 <td>{{ folder.parent2.first_name }} {{ folder.parent2.last_name }} : {{ parent2_total }} €</td>
                             </tr>
                             <tr>
-                                <td>{{ difference }} € {% trans "In Favor Of" %}: {{ in_favor_of.first_name }} {{ in_favor_of.last_name }}</td>
+                                <td>{{ difference }} € {% trans "In Favor Of" %}  {{ in_favor_of.first_name }} {{ in_favor_of.last_name }}</td>
                             </tr>
                         </tbody>
                     </table>

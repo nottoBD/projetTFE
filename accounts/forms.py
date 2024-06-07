@@ -61,6 +61,12 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class MagistrateRegistrationForm(UserCreationForm):
+    ROLE_CHOICES = [
+        ('magistrate', 'Magistrate'),
+        ('lawyer', 'Lawyer'),
+    ]
+
+    role = forms.ChoiceField(choices=ROLE_CHOICES, label="Role")
     first_name = forms.CharField(max_length=30, label=_('First Name'), required=True)
     last_name = forms.CharField(max_length=150, label=_('Last Name'), required=True)
     num_telephone = forms.CharField(max_length=20, initial='+32', label=_('Telephone Number'), required=False)
@@ -68,7 +74,7 @@ class MagistrateRegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['last_name', 'first_name', 'email', 'password1', 'password2',  'num_telephone', 'parents_assigned']
+        fields = ['role', 'last_name', 'first_name', 'email', 'password1', 'password2', 'num_telephone', 'parents_assigned']
 
     def __init__(self, *args, **kwargs):
         super(MagistrateRegistrationForm, self).__init__(*args, **kwargs)
@@ -83,7 +89,7 @@ class MagistrateRegistrationForm(UserCreationForm):
         user.last_name = self.cleaned_data['last_name']
         user.telephone = self.cleaned_data['num_telephone']
         user.is_staff = True  # Magistrates = staff
-        user.role = 'magistrate'
+        user.role = self.cleaned_data['role']
         if commit:
             user.save()
             self.save_m2m()

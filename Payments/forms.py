@@ -17,11 +17,11 @@ from django import forms
 
 
 class PaymentDocumentFormMagistrate(forms.ModelForm):
-    parent = forms.ChoiceField(choices=())  # Initialisez le champ sans les choix pour l'instant
+    parent = forms.ChoiceField(choices=())
 
     class Meta:
         model = PaymentDocument
-        fields = ['amount', 'date', 'document']
+        fields = ['amount', 'date', 'document', 'parent']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'})
         }

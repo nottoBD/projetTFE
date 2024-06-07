@@ -31,6 +31,7 @@ class User(AbstractUser, PermissionsMixin):
     ROLE_CHOICES = [
         ('administrator', 'Administrator'),
         ('magistrate', 'Magistrate'),
+        ('lawyer', 'Lawyer'),
         ('parent', 'Parent'),
     ]
     username = models.CharField(max_length=150, unique=False, null=True, blank=True)
@@ -58,6 +59,9 @@ class User(AbstractUser, PermissionsMixin):
     @property
     def is_administrator(self):
         return self.role == 'administrator'
+
+    def is_lawyer(self):
+        return self.role == 'lawyer'
 
     @property
     def is_magistrate(self):
