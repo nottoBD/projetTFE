@@ -14,7 +14,23 @@
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        {{ form|crispy }}
+                        {{ form.non_field_errors }}
+                        {{ form.amount|as_crispy_field }}
+                        <div class="form-group">
+                            <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                            <select class="form-control" id="{{ form.category.id_for_label }}" name="{{ form.category.name }}">
+                                <option value="">{% trans "Select a category" %}</option>
+                                {% for category_type, categories in grouped_categories.items %}
+                                    <optgroup label="{{ category_type }}">
+                                        {% for category in categories %}
+                                            <option value="{{ category.pk }}" {% if category.pk == form.category.value %}selected{% endif %}>{{ category.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {{ form.date|as_crispy_field }}
+                        {{ form.document|as_crispy_field }}
                         <button type="submit" class="btn btn-primary btn-block mt-3">{% trans "Add" %}</button>
                     </form>
                 </div>

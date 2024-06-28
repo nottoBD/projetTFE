@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 import magic
 
+
 # validations.py
 def validate_image(file):
     valid_mime_types = ['image/jpeg', 'image/png', 'image/gif']

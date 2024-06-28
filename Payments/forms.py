@@ -1,22 +1,24 @@
 from django import forms
 
 from accounts.views import User
-from .models import PaymentDocument, Folder
+from .models import PaymentDocument, Folder, PaymentCategory
 
 
 class PaymentDocumentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = PaymentCategory.objects.order_by('type', 'name')
+        self.fields['category'].required = True
+
     class Meta:
         model = PaymentDocument
-        fields = ['amount', 'date', 'document']
+        fields = ['amount', 'category', 'date', 'document']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'})
         }
 
 
-from django import forms
-
-
-class PaymentDocumentFormMagistrate(forms.ModelForm):
+class PaymentDocumentFormLawyer(forms.ModelForm):
     parent = forms.ChoiceField(choices=())
 
     class Meta:
@@ -36,10 +38,10 @@ class PaymentDocumentFormMagistrate(forms.ModelForm):
 class FolderForm(forms.ModelForm):
     class Meta:
         model = Folder
-        fields = ['magistrate', 'parent1', 'parent2']
+        fields = ['judge', 'parent1', 'parent2']
 
     def __init__(self, *args, **kwargs):
         super(FolderForm, self).__init__(*args, **kwargs)
-        self.fields['magistrate'].queryset = User.objects.filter(role='magistrate')
+        self.fields['judge'].queryset = User.objects.filter(role='judge')
         self.fields['parent1'].queryset = User.objects.filter(role='parent')
         self.fields['parent2'].queryset = User.objects.filter(role='parent')

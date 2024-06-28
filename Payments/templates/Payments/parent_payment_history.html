@@ -1,0 +1,45 @@
+{% extends 'fExtra/base.html' %}
+{% load custom_filters %}
+{% load static i18n %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'Payments/css/history.css' %}">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="card-title mb-0">{% trans "Payments Comparison" %}</h2>
+                    </div>
+                    <!-- Payments comparison table -->
+                    {% for type_id, type_data in categories_by_type.items %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-4">{{ type_data.type_name }}</th>
+                                        <th class="col-md-4">{{ parent1_user.first_name }} {{ parent1_user.last_name }}</th>
+                                        <th class="col-md-4">{{ parent2_user.first_name }} {{ parent2_user.last_name }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="payments-list">
+                                    {% for category_entry in type_data.categories %}
+                                        <tr class="payment-item">
+                                            <td>{{ category_entry.category_name }}</td>
+                                            <td>{{ category_entry.parent1_amount }}</td>
+                                            <td>{{ category_entry.parent2_amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

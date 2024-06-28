@@ -90,6 +90,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fExtra.wsgi.application'
 
+# Postgresql
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -99,6 +100,16 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+# Mysql
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'neok',
+#         'USER': 'user',
+#         'PASSWORD': 'Neok',
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

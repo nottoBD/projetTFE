@@ -7,15 +7,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DeleteView
 
-from .forms import PaymentDocumentForm, FolderForm, PaymentDocumentFormMagistrate
-from .models import PaymentDocument, Folder
+from .forms import PaymentDocumentForm, FolderForm, PaymentDocumentFormLawyer
+from .models import PaymentDocument, Folder, PaymentCategory, CategoryType
 
 User = get_user_model()
 
 
+# View for parent
 class PaymentHistoryView(LoginRequiredMixin, ListView):
     model = PaymentDocument
-    template_name = 'Payments/history.html'
+    template_name = 'Payments/parent_payment_history.html'
     context_object_name = 'payments'
 
     def dispatch(self, request, *args, **kwargs):
@@ -32,17 +33,53 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
         folder = self.folder
         other_parent = folder.parent1 if user == folder.parent2 else folder.parent2
 
-        parent1_total = PaymentDocument.objects.filter(user=folder.parent1).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
-        parent2_total = PaymentDocument.objects.filter(user=folder.parent2).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+        # Retrieve payments for both parents and group by category type
+        parent1_payments = PaymentDocument.objects.filter(user=folder.parent1, category__type__isnull=False).values('category__type', 'category').annotate(total_amount=Sum('amount'))
+        parent2_payments = PaymentDocument.objects.filter(user=folder.parent2, category__type__isnull=False).values('category__type', 'category').annotate(total_amount=Sum('amount'))
 
-        context['parent1_total'] = parent1_total
-        context['parent2_total'] = parent2_total
-        context['total_amount'] = parent1_total + parent2_total
-        context['difference'] = abs(parent1_total - parent2_total)
-        context['in_favor_of'] = folder.parent1 if parent1_total > parent2_total else folder.parent2
-        context['other_parent_name'] = f"{other_parent.first_name} {other_parent.last_name}"
-        context['other_parent_total'] = parent2_total if user == folder.parent1 else parent1_total
-        context['your_total'] = parent1_total if user == folder.parent1 else parent2_total
+        # Create dictionaries to store payments by category type
+        parent1_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment in parent1_payments}
+        parent2_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment in parent2_payments}
+
+        # Get all categories with their type
+        categories = PaymentCategory.objects.filter(type__isnull=False)
+
+        # Ensure all category types are included
+        categories_by_type = {}
+        for category in categories:
+            category_type_id = category.type_id
+            if category_type_id not in categories_by_type:
+                categories_by_type[category_type_id] = {
+                    'type_name': category.type.name,
+                    'categories': [],
+                }
+            categories_by_type[category_type_id]['categories'].append({
+                'category_id': category.id,
+                'category_name': category.name,
+                'parent1_amount': parent1_payments_dict.get((category_type_id, category.id), 0),
+                'parent2_amount': parent2_payments_dict.get((category_type_id, category.id), 0),
+            })
+            print(parent1_payments)
+
+        # Calculate totals and other comparative data
+        parent1_total = sum(parent1_payments_dict.values())
+        parent2_total = sum(parent2_payments_dict.values())
+        difference = abs(parent1_total - parent2_total)
+        in_favor_of = folder.parent1 if parent1_total > parent2_total else folder.parent2
+
+        context.update({
+            'parent1_user': folder.parent1,
+            'parent2_user': folder.parent2,
+            'categories_by_type': categories_by_type,
+            'parent1_total': parent1_total,
+            'parent2_total': parent2_total,
+            'total_amount': parent1_total + parent2_total,
+            'difference': difference,
+            'in_favor_of': in_favor_of,
+            'other_parent_name': f"{other_parent.first_name} {other_parent.last_name}",
+            'other_parent_total': parent2_total if user == folder.parent1 else parent1_total,
+            'your_total': parent1_total if user == folder.parent1 else parent2_total,
+        })
 
         # Pass user_can_delete for each payment
         payments_with_permissions = [
@@ -52,17 +89,8 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
             } for payment in self.get_queryset()
         ]
         context['payments_with_permissions'] = payments_with_permissions
-        return context
 
-    def render_to_response(self, context, **response_kwargs):
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            payments_list = [{
-                'date': payment.date,
-                'amount': payment.amount
-            } for payment in context['payments']]
-            return JsonResponse({'payments': payments_list})
-        else:
-            return super().render_to_response(context, **response_kwargs)
+        return context
 
 
 class PaymentDeleteView(LoginRequiredMixin, DeleteView):
@@ -75,23 +103,25 @@ class PaymentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         payment_document = self.object
-        return reverse('Payments:history')
+        return reverse('Payments:parent-payment-history')
 
 
-class UserFolderListView(LoginRequiredMixin, ListView):
+# For judge and lawyer (only see the folders assigned to them)
+class MagistrateFolderListView(LoginRequiredMixin, ListView):
     model = Folder
     template_name = 'Payments/list_folder.html'
     context_object_name = 'folders'
 
     def get_queryset(self):
         user = self.request.user
-        # Filtrer les dossiers par l'utilisateur connecté en tant que magistrat ou avocat
-        return Folder.objects.filter(Q(magistrate=user) | Q(lawyer=user))
+        # Filter cases by user logged in as judge or lawyer
+        return Folder.objects.filter(Q(judge=user) | Q(lawyer=user))
 
 
+# For judge and lawyer (see all payments of one folder)
 class FolderPaymentHistoryView(LoginRequiredMixin, ListView):
     model = PaymentDocument
-    template_name = 'Payments/folder_payment_history.html'
+    template_name = 'Payments/magistrate_folder_payment_history.html'
     context_object_name = 'payments'
 
     def get_queryset(self):
@@ -116,13 +146,31 @@ class FolderPaymentHistoryView(LoginRequiredMixin, ListView):
 
 
 @login_required
+# when parent add payments
 def submit_payment_document(request):
     user = request.user
     folders = Folder.objects.filter(parent1=user) | Folder.objects.filter(parent2=user)
 
     if not folders.exists():
-        # Rediriger ou afficher un message si l'utilisateur n'a pas de dossier associé
+        # Redirigez ou affichez un message si l'utilisateur n'a pas de dossier associé
         return redirect('Payments:history')
+
+    categories = PaymentCategory.objects.order_by('type_id', 'name')
+
+    # Créer un dictionnaire pour regrouper les catégories par type
+    grouped_categories = {}
+    for category in categories:
+        if category.type not in grouped_categories:
+            grouped_categories[category.type] = []
+        grouped_categories[category.type].append(category)
+
+    # Déplacer la catégorie 'Autre' à la fin de sa liste respective
+    for categories_list in grouped_categories.values():
+        for category in categories_list:
+            if category.name == 'Autre':
+                categories_list.remove(category)
+                categories_list.append(category)
+                break
 
     if request.method == 'POST':
         form = PaymentDocumentForm(request.POST, request.FILES)
@@ -131,43 +179,50 @@ def submit_payment_document(request):
             payment_document.user = user
             payment_document.folder = folders.first()
             payment_document.save()
-            return redirect('Payments:history')  # Rediriger vers une page de succès
+            # Redirigez vers une page de succès
+            return redirect('Payments:parent-payment-history')
     else:
         form = PaymentDocumentForm()
-    return render(request, 'Payments/submit_payment_document.html', {'form': form})
 
+    context = {
+        'form': form,
+        'grouped_categories': grouped_categories,
+    }
 
-def submit_payment_document_magistrate(request, folder_id):
+    return render(request, 'Payments/submit_payment_document.html', context)
+
+# When lawyer add payment
+def submit_payment_document_lawyer(request, folder_id):
     folder = Folder.objects.get(pk=folder_id)
     if request.method == 'POST':
-        form = PaymentDocumentFormMagistrate(request.POST, request.FILES, parent_choices=get_parent_choices(folder))
+        form = PaymentDocumentFormLawyer(request.POST, request.FILES, parent_choices=get_parent_choices(folder))
         if form.is_valid():
             payment_document = form.save(commit=False)
             payment_document.folder = folder
 
-            # Récupérer l'utilisateur à partir du champ 'parent'
+            # Get user from 'parent' field
             parent_user_id = form.cleaned_data['parent']
             payment_document.user = get_user_model().objects.get(id=parent_user_id)
 
             payment_document.save()
-            # Obtenir l'URL de la page 'folder_payment_history' avec le bon paramètre folder_id
-            folder_payment_history_url = reverse('Payments:folder_payment_history', kwargs={'folder_id': folder_id})
-            return redirect(folder_payment_history_url)  # Rediriger vers la page d'historique de paiement du dossier
+            # Get the URL of the 'folder_payment_history' page with the correct folder_id parameter
+            folder_payment_history_url = reverse('Payments:magistrate_folder_payment_history', kwargs={'folder_id': folder_id})
+            return redirect(folder_payment_history_url)
     else:
-        form = PaymentDocumentFormMagistrate(parent_choices=get_parent_choices(folder))
-    return render(request, 'Payments/submit_payment_document_magistrate.html', {'form': form, 'folder': folder})
+        form = PaymentDocumentFormLawyer(parent_choices=get_parent_choices(folder))
+    return render(request, 'Payments/submit_payment_document_lawyer.html', {'form': form, 'folder': folder})
 
 
 def get_parent_choices(folder):
-    # Récupérer les IDs des parents depuis le dossier en question
+    # Retrieve parent IDs from the folder in question
     parent1_id = folder.parent1_id
     parent2_id = folder.parent2_id
 
-    # Récupérer les noms complets des parents en utilisant les IDs
+    # Retrieve parents' full names using IDs
     parent1 = get_user_model().objects.get(id=parent1_id)
     parent2 = get_user_model().objects.get(id=parent2_id)
 
-    # Créer une liste de choix en utilisant les noms complets des parents
+    # Create a wish list using parents' full names
     choices = [
         (parent1.id, f"{parent1.first_name} {parent1.last_name}"),
         (parent2.id, f"{parent2.first_name} {parent2.last_name}")
@@ -177,23 +232,25 @@ def get_parent_choices(folder):
 
 def create_folder(request):
     if not request.user.is_authenticated or request.user.role != 'lawyer':
-        return redirect('login')  # Rediriger vers la page de login si l'utilisateur n'est pas un avocat connecté
+        # Redirect to login page if user is not a logged in lawyer
+        return redirect('login')
 
     if request.method == 'POST':
         form = FolderForm(request.POST)
         if form.is_valid():
             folder = form.save(commit=False)
-            folder.lawyer = request.user  # Assigner l'avocat connecté
+            folder.lawyer = request.user
             folder.save()
-            return redirect('Payments:list_folder')  # Rediriger vers une liste des dossiers ou autre page de succès
+            # Redirect to a list of folders or other success page
+            return redirect('Payments:list_folder')
     else:
-        # Récupérer les parents qui ne sont pas déjà dans un dossier
+        # Retrieve parents that are not already in a folder
         existing_parents = Folder.objects.values_list('parent1', 'parent2')
         existing_parents_ids = set()
         for parent_pair in existing_parents:
             existing_parents_ids.update(parent_pair)
 
-        # Exclure les parents déjà dans un dossier
+        # Exclude parents already in a folder
         form = FolderForm(initial={'parent1': request.user})  # Initialiser avec l'utilisateur connecté par défaut
         form.fields['parent1'].queryset = form.fields['parent1'].queryset.exclude(id__in=existing_parents_ids)
         form.fields['parent2'].queryset = form.fields['parent2'].queryset.exclude(id__in=existing_parents_ids)

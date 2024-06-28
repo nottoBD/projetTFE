@@ -18,6 +18,7 @@ from .models import User, MagistrateParent
 
 User = get_user_model()
 
+
 class UserListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'accounts/user_list.html'

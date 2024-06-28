@@ -77,7 +77,7 @@
                             <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Home" %}</span>
                         </a>
                     </li>
-                    {% if request.user.role == 'parent' or request.user.role == 'magistrate' or request.user.role == 'lawyer' %}
+                    {% if request.user.role == 'parent' or request.user.role == 'judge' or request.user.role == 'lawyer' %}
                     <li>
                         <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-currency-dollar"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Payments" %}</span>
@@ -88,17 +88,17 @@
                                 <a href="/Payments/create_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add folder" %}</a>
                             </li>
                             {% endif %}
-                            {% if request.user.role == 'magistrate' or request.user.role == 'lawyer'%}
+                            {% if request.user.role == 'judge' or request.user.role == 'lawyer'%}
                             <li>
                                 <a href="/Payments/list_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Folder list" %}</a>
                             </li>
                             {% endif %}
                             {% if request.user.role == 'parent' %}
                             <li class="w-100">
-                                <a href="/Payments/add-doc" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Payments" %}</a>
+                                <a href="/Payments/parent-add-payment" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Payments" %}</a>
                             </li>
                             <li>
-                                <a href="/Payments/history" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "History" %}</a>
+                                <a href="/Payments/parent-payment-history" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "History" %}</a>
                             </li>
                             {% endif %}
                         </ul>
@@ -118,7 +118,7 @@
                             </li>
                             {% if request.user.role == 'administrator' %}
                             <li>
-                                <a href="/accounts/register-magistrate" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add" %} magistrat / lawyer</a>
+                                <a href="/accounts/register-magistrate" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add" %} judge / lawyer</a>
                             </li>
                             {% endif %}
                         </ul>
