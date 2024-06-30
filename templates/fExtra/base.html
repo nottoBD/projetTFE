@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load i18n static language_filters %}
+{% load i18n static language_filters cookiebanner %}
 
 <html lang="en">
 <head>
@@ -16,6 +16,9 @@
 </head>
 
 <body>
+{% cookiebanner_modal 'test' %}
+
+
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
@@ -52,7 +55,8 @@
     </div>
 </nav>
 
-<div class="container-fluid"> <!-- Adjust padding to avoid overlap with navbar -->
+<div class="container-fluid">
+    <!-- Adjust padding to avoid overlap with navbar -->
     <div class="row flex-nowrap">
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 bg-dark">
             <div class="d-flex flex-column align-items-center align-items-sm-start px-2 pt-2 text-white min-vh-100">
@@ -60,70 +64,70 @@
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                     {% if not request.user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="/accounts/login" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi bi-journal-check"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Login" %}</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/accounts/register" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi bi-journal-plus"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Register" %}</span>
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="/accounts/login" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi bi-journal-check"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Login" %}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/accounts/register" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi bi-journal-plus"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Register" %}</span>
+                            </a>
+                        </li>
                     {% endif %}
                     {% if request.user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="/" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Home" %}</span>
-                        </a>
-                    </li>
-                    {% if request.user.role == 'parent' or request.user.role == 'judge' or request.user.role == 'lawyer' %}
-                    <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-currency-dollar"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Payments" %}</span>
-                        </a>
-                        <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
-                            {% if request.user.role == 'lawyer' %}
-                            <li class="w-100">
-                                <a href="/Payments/create_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add folder" %}</a>
-                            </li>
-                            {% endif %}
-                            {% if request.user.role == 'judge' or request.user.role == 'lawyer'%}
+                        <li class="nav-item">
+                            <a href="/" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Home" %}</span>
+                            </a>
+                        </li>
+                        {% if request.user.role == 'parent' or request.user.role == 'judge' or request.user.role == 'lawyer' %}
                             <li>
-                                <a href="/Payments/list_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Folder list" %}</a>
+                                <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                    <i class="fs-4 bi-currency-dollar"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Payments" %}</span>
+                                </a>
+                                <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                                    {% if request.user.role == 'lawyer' %}
+                                        <li class="w-100">
+                                            <a href="/Payments/create_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add folder" %}</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if request.user.role == 'judge' or request.user.role == 'lawyer'%}
+                                        <li>
+                                            <a href="/Payments/list_folder" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Folder list" %}</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if request.user.role == 'parent' %}
+                                        <li class="w-100">
+                                            <a href="/Payments/parent-add-payment" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Payments" %}</a>
+                                        </li>
+                                        <li>
+                                            <a href="/Payments/parent-payment-history" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "History" %}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
                             </li>
-                            {% endif %}
-                            {% if request.user.role == 'parent' %}
-                            <li class="w-100">
-                                <a href="/Payments/parent-add-payment" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Payments" %}</a>
-                            </li>
+                        {% endif %}
+                        {% if request.user.is_staff %}
                             <li>
-                                <a href="/Payments/parent-payment-history" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "History" %}</a>
+                                <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Accounts" %}</span>
+                                </a>
+                                <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                                    <li class="w-100">
+                                        <a href="/accounts/list" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "List All" %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="/accounts/register" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Parent" %}</a>
+                                    </li>
+                                    {% if request.user.role == 'administrator' %}
+                                        <li>
+                                            <a href="/accounts/register-magistrate" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add" %} judge / lawyer</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
                             </li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    {% endif %}
-                    {% if request.user.is_staff %}
-                    <li>
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Accounts" %}</span>
-                        </a>
-                        <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-                            <li class="w-100">
-                                <a href="/accounts/list" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "List All" %}</a>
-                            </li>
-                            <li>
-                                <a href="/accounts/register" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add Parent" %}</a>
-                            </li>
-                            {% if request.user.role == 'administrator' %}
-                            <li>
-                                <a href="/accounts/register-magistrate" class="nav-link px-0"> <span class="d-none d-sm-inline"></span>{% trans "Add" %} judge / lawyer</a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    {% endif %}
+                        {% endif %}
                     {% endif %}
                     <li>
                         {% get_current_language as LANGUAGE_CODE %}
@@ -133,16 +137,27 @@
                         </a>
                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
                             {% for lang in LANGUAGES %}
-                            {% if lang.0|compare_codes != LANGUAGE_CODE|compare_codes %}
-                            <li class="w-100">
-                                <a href="#" class="nav-link px-0 language-selector" data-language="{{ lang.0 }}">
-                                    <span class="d-none d-sm-inline">{{ lang.1 }}</span>
-                                    {{ lang.0|cut:"_BE"|cut:"-BE" }}
-                                </a>
-                            </li>
-                            {% endif %}
+                                {% if lang.0|compare_codes != LANGUAGE_CODE|compare_codes %}
+                                    <li class="w-100">
+                                        <a href="#" class="nav-link px-0 language-selector" data-language="{{ lang.0 }}">
+                                            <span class="d-none d-sm-inline">{{ lang.1 }}</span>
+                                            {{ lang.0|cut:"_BE"|cut:"-BE" }}
+                                        </a>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
+                    </li>
+                    <li>
+                        <a href="#" onclick="document.querySelector('#cookiebannerModal').classList.remove('hidden')" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi-cookie"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Change Cookie Preferences" %}</span>
+                        </a>
+                    </li>
+                    <li>
+                        {% cookie_accepted 'analytics' as cookie_analytics %}
+                        {% if cookie_analytics %}
+                            <script>... javascript for matomo ...</script>
+                        {% endif %}
                     </li>
                 </ul>
                 <hr>
@@ -154,6 +169,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="{% static 'fExtra/js/base.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
