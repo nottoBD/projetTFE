@@ -1,13 +1,7 @@
+{% extends 'fExtra/base.html' %}
 {% load static i18n %}
+{% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% trans "Privacy Policy" %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
 <div class="container">
     <h1>{% trans "Privacy Policy" %}</h1>
     <p>{% trans "Welcome to our Privacy Policy page. Your privacy is critically important to us." %}</p>
@@ -24,5 +18,4 @@
     <h2>{% trans "Contact Us" %}</h2>
     <p>{% trans "If you have any questions or concerns about our privacy practices, please do not hesitate to contact us." %}</p>
 </div>
-</body>
-</html>
+{% endblock content %}
