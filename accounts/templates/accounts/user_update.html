@@ -15,6 +15,24 @@
                     <div class="d-flex align-items-center mb-3">
                         <img src="{{ user.profile_image.url }}" alt="{% trans "Profile image" %}" width="100" height="100" class="rounded-circle me-3">
                         <div>
+                            {% load i18n %}
+                            {% if user.is_deletion_pending %}
+                                <p>{% trans "Your account is scheduled for deletion on" %} {{ user.deletion_requested_at|date:"Y-m-d" }}.</p>
+                                <a href="{% url 'accounts:cancel_deletion' user.pk %}">{% trans "Cancel Deletion Request" %}</a>
+                                {% if not user.is_superuser %}
+                                {% else %}
+                                    <a href="{% url 'accounts:request_deletion' user.pk %}">{% trans "Request Account Deletion" %}</a>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if request.user.is_superuser %}
+                                {% if user.is_deletion_pending %}
+                                    <p>{% trans "User has requested account deletion." %}</p>
+{#TODO: pictogramme poubelle pour supprimer toutes les données par un superuser#}
+{#                                    <img src="{% static 'images/red_bin.png' %}" alt="{% trans "Delete Requested" %}">#}
+                                {% endif %}
+                            {% endif %}
+
                             <h4>{{ user.last_name }} {{ user.first_name }}</h4>
                             <!-- switch is_active -->
                             {% if form.fields.is_active %}

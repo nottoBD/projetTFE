@@ -19,4 +19,7 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', PasswordResetConfirmationView.as_view(), name='password_reset_confirmation'),
     path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+    path('request_deletion/<int:pk>/', views.request_deletion, name='request_deletion'),
+    path('cancel_deletion/<int:pk>/', views.cancel_deletion, name='cancel_deletion'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

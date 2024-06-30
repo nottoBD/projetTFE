@@ -8,12 +8,12 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Count
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import ListView, UpdateView
 
-from .forms import MagistrateRegistrationForm, UserRegisterForm, UserUpdateForm
+from .forms import MagistrateRegistrationForm, UserRegisterForm, UserUpdateForm, CancelDeletionForm, DeletionRequestForm
 from .models import User, MagistrateParent
 
 User = get_user_model()
@@ -210,3 +210,33 @@ class PasswordResetConfirmationView(PasswordResetConfirmView):
     post_reset_login = False
     success_url = reverse_lazy('accounts:login')
 
+
+@login_required
+def request_deletion(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if user.is_superuser:
+        messages.error(request, _('Superuser accounts cannot be deleted.'))
+        return redirect('user_update', pk=user.pk)
+
+    if request.method == 'POST':
+        form = DeletionRequestForm(request.POST)
+        if form.is_valid():
+            user.request_deletion()
+            messages.success(request, 'Account deletion requested successfully.')
+            return redirect('home')
+    else:
+        form = DeletionRequestForm()
+    return render(request, 'accounts/request_deletion.html', {'form': form})
+
+@login_required
+def cancel_deletion(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = CancelDeletionForm(request.POST)
+        if form.is_valid():
+            user.cancel_deletion()
+            messages.success(request, 'Account deletion request cancelled successfully.')
+            return redirect('home')
+    else:
+        form = CancelDeletionForm()
+    return render(request, 'accounts/cancel_deletion.html', {'form': form})

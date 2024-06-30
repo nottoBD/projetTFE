@@ -153,3 +153,11 @@ class UserRegisterForm(UserCreationForm):
         self.fields['date_of_birth'].widget.format = '%d/%m/%Y'
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
+
+
+class DeletionRequestForm(forms.Form):
+    confirm = forms.BooleanField(label="Confirm deletion request")
+
+
+class CancelDeletionForm(forms.Form):
+    confirm = forms.BooleanField(label="Confirm cancellation of deletion request")
