@@ -3,18 +3,16 @@
 <div id="cookiebannerModal" class="hidden" tabindex="-1" role="dialog" aria-labelledby="cookiebannerModalLabel" aria-hidden="true">
     <div id="cookiebannerModalDialog">
         <div id="cookiebannerModalHeader">
-            <h3 id="cookiebannerModalTitle">{{ cb_settings.title }}</h3>
-            {% if cb_settings.header_text %}
-                <p>{{ cb_settings.header_text|safe }}</p>
-            {% endif %}
+            <h3 id="cookiebannerModalTitle">{% trans "Your Privacy Matters" %}</h3>
+            <p>{% trans "We use cookies to ensure that you have the best experience on our website. These cookies are essential for the website to function properly and do not collect any personal data." %}</p>
         </div>
         <div id="cookiebannerModalBody">
-            <form id="cookiebannerForm">
-                {% for cookiegroup in cb_settings.groups %}
+            {% for cookiegroup in cb_settings.groups %}
+                {% if not cookiegroup.optional %}
                     <div id="cookiegroup_{{ cookiegroup.id }}" style="margin-bottom: 10px;">
                         <div>
                             <label class="switch">
-                                <input type="checkbox" name="{{ cookiegroup.id }}" {% if not cookiegroup.optional %}checked disabled{% endif %}>
+                                <input type="checkbox" name="{{ cookiegroup.id }}" checked disabled>
                                 <span class="slider"></span>
                             </label>
                             <h4 class="cookiebannerH4">{{ cookiegroup.name }}</h4>
@@ -34,21 +32,14 @@
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            </form>
+                {% endif %}
+            {% endfor %}
         </div>
         <div id="cookiebannerModalFooter">
-            {% if cb_settings.footer_text %}
-                <p class="text-left">{{ cb_settings.footer_text|safe }}</p>
-            {% endif %}
-            <input type="submit" name="enable_all" class="cookiebannerSubmit btn"
-                   value="{% trans 'Accept all' %}">
-            <input type="submit" name="save" class="cookiebannerSubmit btn"
-                   value="{% trans 'Save' %}">
+            <input type="submit" name="accept" class="cookiebannerSubmit btn" value="{% trans 'Accept' %}">
             <nav id="cookiebannerModalFooterLinks">
-                {% for link in cb_settings.footer_links %}
-                    <span class="nav-item"><a class="nav-link" href="{{ link.href }}">{{ link.title }}</a></span>
-                {% endfor %}
+                <p>{% trans "This website does not collect any data it does not require to function." %}</p>
+                <span class="nav-item"><a class="nav-link" href="{% url 'privacy' %}">{% trans "Privacy Policy" %}</a></span>
             </nav>
         </div>
     </div>
@@ -56,22 +47,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const cookiegroups = JSON.parse("{{ cookiegroups_json|escapejs }}");
-
-        function getCookie(name) {
-            let cookieArray = document.cookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-                let cookie = cookieArray[i];
-                while (cookie.charAt(0) == ' ') {
-                    cookie = cookie.substring(1);
-                }
-                if (cookie.indexOf(name + "=") == 0) {
-                    return cookie.substring(name.length + 1, cookie.length);
-                }
-            }
-            return "";
-        }
-
         function setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -82,17 +57,11 @@
             document.cookie = name + "=" + (value || "") + expires + "; path=/";
         }
 
-        function restoreCheckboxStates() {
-            const savedCookieValue = getCookie('cookiebanner');
-            if (savedCookieValue) {
-                const savedValues = savedCookieValue.split(',');
-                document.querySelectorAll("#cookiebannerForm input[type='checkbox']").forEach((checkbox) => {
-                    checkbox.checked = savedValues.includes(checkbox.name);
-                });
-            }
-        }
-
-        restoreCheckboxStates();
+        document.querySelector("input[name='accept']").addEventListener("click", function (event) {
+            event.preventDefault();
+            setCookie('cookiebanner', 'accepted', 365);
+            window.location.reload();
+        });
 
         document.body.addEventListener('click', function (event) {
             if (event.target.matches("a[data-toggle='cookiebannerCollapse']")) {
@@ -103,23 +72,6 @@
                     detailElement.classList.toggle('show');
                 }
             }
-        });
-
-        document.querySelectorAll("input[type='submit']").forEach((button) => {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
-                let enable_cookies = [];
-                if (button.name === 'enable_all') {
-                    enable_cookies = cookiegroups.map(group => group.id);
-                } else {
-                    document.querySelectorAll("#cookiebannerForm input[type='checkbox']:checked").forEach((checkbox) => {
-                        enable_cookies.push(checkbox.name);
-                    });
-                }
-
-                setCookie('cookiebanner', enable_cookies.join(','), 365);
-                window.location.reload();
-            });
         });
     });
 </script>
@@ -221,7 +173,6 @@
         padding: 0.1em 0.2em 0.1em;
     }
 
-    /* The switch - the box around the slider */
     .switch {
         font-size: 1rem;
         vertical-align: middle;
@@ -232,14 +183,12 @@
         margin: 0 0.3125em 0.3125em 0;
     }
 
-    /* Hide default HTML checkbox */
     .switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
 
-    /* The slider */
     .slider {
         position: absolute;
         cursor: pointer;
@@ -282,5 +231,4 @@
     input[type="submit"] {
         cursor: pointer;
     }
-
 </style>

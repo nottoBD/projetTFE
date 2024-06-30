@@ -150,14 +150,8 @@
                     </li>
                     <li>
                         <a href="#" onclick="document.querySelector('#cookiebannerModal').classList.remove('hidden')" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-cookie"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Change Cookie Preferences" %}</span>
+                            <i class="fs-4 bi-cookie"></i> <span class="ms-1 d-none d-sm-inline">{% trans "Cookie Preferences" %}</span>
                         </a>
-                    </li>
-                    <li>
-                        {% cookie_accepted 'analytics' as cookie_analytics %}
-                        {% if cookie_analytics %}
-                            <script>... javascript for matomo ...</script>
-                        {% endif %}
                     </li>
                 </ul>
                 <hr>
