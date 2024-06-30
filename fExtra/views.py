@@ -5,3 +5,6 @@ from django.shortcuts import render
 @login_required(login_url="/accounts/login")
 def home(request):
     return render(request, 'fExtra/home.html')
+
+def privacy_view(request):
+    return render(request, 'cookiebanner/privacy.html')
