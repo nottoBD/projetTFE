@@ -37,17 +37,34 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
         folder = self.folder
         other_parent = folder.parent1 if user == folder.parent2 else folder.parent2
 
-        # Retrieve payments for both parents and group by category type
-        parent1_payments = PaymentDocument.objects.filter(user=folder.parent1, category__type__isnull=False).values(
+        # Retrieve only validated payments for both parents and group by category type
+        parent1_valid_payments = PaymentDocument.objects.filter(user=folder.parent1, category__type__isnull=False,
+                                                                status='validated').values(
             'category__type', 'category').annotate(total_amount=Sum('amount'))
-        parent2_payments = PaymentDocument.objects.filter(user=folder.parent2, category__type__isnull=False).values(
+        parent2_valid_payments = PaymentDocument.objects.filter(user=folder.parent2, category__type__isnull=False,
+                                                                status='validated').values(
+            'category__type', 'category').annotate(total_amount=Sum('amount'))
+
+        # Retrieve pending payments for both parents
+        parent1_pending_payments = PaymentDocument.objects.filter(user=folder.parent1, category__type__isnull=False,
+                                                                  status='pending').values(
+            'category__type', 'category').annotate(total_amount=Sum('amount'))
+        parent2_pending_payments = PaymentDocument.objects.filter(user=folder.parent2, category__type__isnull=False,
+                                                                  status='pending').values(
             'category__type', 'category').annotate(total_amount=Sum('amount'))
 
         # Create dictionaries to store payments by category type
-        parent1_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment
-                                 in parent1_payments}
-        parent2_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment
-                                 in parent2_payments}
+        parent1_valid_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for
+                                       payment
+                                       in parent1_valid_payments}
+        parent2_valid_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for
+                                       payment
+                                       in parent2_valid_payments}
+
+        parent1_pending_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment
+                                in parent1_pending_payments}
+        parent2_pending_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment
+                                in parent2_pending_payments}
 
         # Get all categories with their type
         categories = PaymentCategory.objects.filter(type__isnull=False)
@@ -56,11 +73,14 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
         categories_by_type = {}
         for category in categories:
             category_type_id = category.type_id
-            parent1_amount = parent1_payments_dict.get((category_type_id, category.id), 0)
-            parent2_amount = parent2_payments_dict.get((category_type_id, category.id), 0)
+            parent1_amount = parent1_valid_payments_dict.get((category_type_id, category.id), 0)
+            parent2_amount = parent2_valid_payments_dict.get((category_type_id, category.id), 0)
+
+            parent1_pending_amount = parent1_pending_dict.get((category_type_id, category.id), 0)
+            parent2_pending_amount = parent2_pending_dict.get((category_type_id, category.id), 0)
 
             # Exclude categories where both parents have 0 amount
-            if parent1_amount == 0 and parent2_amount == 0:
+            if parent1_amount == 0 and parent2_amount == 0 and parent1_pending_amount == 0 and parent2_pending_amount == 0:
                 continue
 
             if category_type_id not in categories_by_type:
@@ -73,12 +93,14 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
                 'category_name': category.name,
                 'parent1_amount': parent1_amount,
                 'parent2_amount': parent2_amount,
+                'parent1_pending_amount': parent1_pending_amount,
+                'parent2_pending_amount': parent2_pending_amount,
                 'details_url': reverse('Payments:category-payments', args=[category.id])
             })
 
         # Calculate totals and other comparative data
-        parent1_total = sum(parent1_payments_dict.values())
-        parent2_total = sum(parent2_payments_dict.values())
+        parent1_total = sum(parent1_valid_payments_dict.values())
+        parent2_total = sum(parent2_valid_payments_dict.values())
         difference = abs(parent1_total - parent2_total)
         in_favor_of = folder.parent1 if parent1_total > parent2_total else folder.parent2
 
@@ -110,7 +132,7 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
 
 class CategoryPaymentsView(LoginRequiredMixin, ListView):
     model = PaymentDocument
-    template_name = 'Payments/parent-category-history.html'
+    template_name = 'Payments/parent_category_history.html'
     context_object_name = 'payments'
 
     def get_queryset(self):
@@ -216,7 +238,7 @@ def submit_payment_document(request):
             payment_document = form.save(commit=False)
             payment_document.user = user
             payment_document.folder = folders.first()
-            payment_document.status = 'pending'  # Nouveau paiement marqué comme en attente
+            payment_document.status = 'pending'
 
             if new_category_name:
                 other_type, created = CategoryType.objects.get_or_create(name='Autre')
@@ -241,25 +263,36 @@ def submit_payment_document(request):
 
 
 # When lawyer add payment
+@transaction.atomic
 def submit_payment_document_lawyer(request, folder_id):
-    folder = Folder.objects.get(pk=folder_id)
+    folder = get_object_or_404(Folder, pk=folder_id)
+    categories = PaymentCategory.objects.order_by('type_id', 'name')
+
+    grouped_categories = {}
+    for category in categories:
+        if category.type not in grouped_categories:
+            grouped_categories[category.type] = []
+        grouped_categories[category.type].append(category)
+
     if request.method == 'POST':
         form = PaymentDocumentFormLawyer(request.POST, request.FILES, parent_choices=get_parent_choices(folder))
+
         if form.is_valid():
             payment_document = form.save(commit=False)
             payment_document.folder = folder
-
-            # Get user from 'parent' field
             parent_user_id = form.cleaned_data['parent']
+            payment_document.status = 'validated'  # Assurez-vous de définir le bon statut ici
             payment_document.user = get_user_model().objects.get(id=parent_user_id)
-
             payment_document.save()
-            # Get the URL of the 'folder_payment_history' page with the correct folder_id parameter
-            folder_payment_history_url = reverse('Payments:magistrate_folder_payment_history', kwargs={'folder_id': folder_id})
-            return redirect(folder_payment_history_url)
+            return redirect(reverse('Payments:magistrate_folder_payment_history', kwargs={'folder_id': folder_id}))
     else:
         form = PaymentDocumentFormLawyer(parent_choices=get_parent_choices(folder))
-    return render(request, 'Payments/submit_payment_document_lawyer.html', {'form': form, 'folder': folder})
+
+    return render(request, 'Payments/submit_payment_document_lawyer.html', {
+        'form': form,
+        'folder': folder,
+        'grouped_categories': grouped_categories,
+    })
 
 
 @require_POST

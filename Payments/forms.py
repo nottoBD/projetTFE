@@ -23,7 +23,7 @@ class PaymentDocumentFormLawyer(forms.ModelForm):
 
     class Meta:
         model = PaymentDocument
-        fields = ['amount', 'date', 'document', 'parent']
+        fields = ['amount', 'category', 'date', 'document', 'parent']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'})
         }

@@ -3,8 +3,6 @@
 {% load static i18n %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'Payments/css/category_payments.css' %}">
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
@@ -13,6 +11,12 @@
                     <h2 class="card-title mb-4">{% trans "Payments for Category" %}: {{ category.name }}</h2>
                     
                     {% if parent1_payments or parent2_payments %}
+                          <div class="mb-3">
+                            <span class="bg-success p-1 rounded">{% trans "Validated" %}</span>
+                            <span class="bg-warning p-1 rounded">{% trans "Pending" %}</span>
+                            <span class="bg-danger p-1 rounded">{% trans "Rejected" %}</span>
+                        </div>
+
                         {% if parent1_payments %}
                             <h3>{% trans "Payments by" %} {{ parent1_name }}</h3>
                             <div class="table-responsive">
@@ -26,7 +30,7 @@
                                     </thead>
                                     <tbody>
                                         {% for payment in parent1_payments %}
-                                            <tr>
+                                            <tr class="{% if payment.status == 'validated' %} bg-success {% elif payment.status == 'pending' %} bg-warning {% elif payment.status == 'rejected' %} bg-danger {% endif %}">
                                                 <td>{{ payment.date|date:"d/m/Y" }}</td>
                                                 <td>{{ payment.amount }} €</td>
                                                 <td>
@@ -52,18 +56,18 @@
                                     <thead>
                                         <tr>
                                             <th>{% trans "Date" %}</th>
-                                            <th>{% trans "Amount"%}</th>
+                                            <th>{% trans "Amount" %}</th>
                                             <th>{% trans "Document" %}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for payment in parent2_payments %}
-                                            <tr>
+                                            <tr class="{% if payment.status == 'validated' %} bg-success {% elif payment.status == 'pending' %} bg-warning {% elif payment.status == 'rejected' %} bg-danger {% endif %}">
                                                 <td>{{ payment.date|date:"d/m/Y" }}</td>
                                                 <td>{{ payment.amount }} €</td>
                                                 <td>
                                                     {% if payment.document %}
-                                                        <a href="{{ payment.document.url }}" class="btn btn-info btn-sm" target="_blank">
+                                                        <a href="{{ payment.document.url }}" class="btn btn-primary btn-sm" target="_blank">
                                                             {% trans "View Document" %}
                                                         </a>
                                                     {% else %}
