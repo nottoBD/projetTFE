@@ -34,12 +34,16 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
         other_parent = folder.parent1 if user == folder.parent2 else folder.parent2
 
         # Retrieve payments for both parents and group by category type
-        parent1_payments = PaymentDocument.objects.filter(user=folder.parent1, category__type__isnull=False).values('category__type', 'category').annotate(total_amount=Sum('amount'))
-        parent2_payments = PaymentDocument.objects.filter(user=folder.parent2, category__type__isnull=False).values('category__type', 'category').annotate(total_amount=Sum('amount'))
+        parent1_payments = PaymentDocument.objects.filter(user=folder.parent1, category__type__isnull=False).values(
+            'category__type', 'category').annotate(total_amount=Sum('amount'))
+        parent2_payments = PaymentDocument.objects.filter(user=folder.parent2, category__type__isnull=False).values(
+            'category__type', 'category').annotate(total_amount=Sum('amount'))
 
         # Create dictionaries to store payments by category type
-        parent1_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment in parent1_payments}
-        parent2_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment in parent2_payments}
+        parent1_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment
+                                 in parent1_payments}
+        parent2_payments_dict = {(payment['category__type'], payment['category']): payment['total_amount'] for payment
+                                 in parent2_payments}
 
         # Get all categories with their type
         categories = PaymentCategory.objects.filter(type__isnull=False)
@@ -48,6 +52,13 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
         categories_by_type = {}
         for category in categories:
             category_type_id = category.type_id
+            parent1_amount = parent1_payments_dict.get((category_type_id, category.id), 0)
+            parent2_amount = parent2_payments_dict.get((category_type_id, category.id), 0)
+
+            # Exclude categories where both parents have 0 amount
+            if parent1_amount == 0 and parent2_amount == 0:
+                continue
+
             if category_type_id not in categories_by_type:
                 categories_by_type[category_type_id] = {
                     'type_name': category.type.name,
@@ -56,10 +67,10 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
             categories_by_type[category_type_id]['categories'].append({
                 'category_id': category.id,
                 'category_name': category.name,
-                'parent1_amount': parent1_payments_dict.get((category_type_id, category.id), 0),
-                'parent2_amount': parent2_payments_dict.get((category_type_id, category.id), 0),
+                'parent1_amount': parent1_amount,
+                'parent2_amount': parent2_amount,
+                'details_url': reverse('Payments:category-payments', args=[category.id])
             })
-            print(parent1_payments)
 
         # Calculate totals and other comparative data
         parent1_total = sum(parent1_payments_dict.values())
@@ -89,6 +100,36 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
             } for payment in self.get_queryset()
         ]
         context['payments_with_permissions'] = payments_with_permissions
+
+        return context
+
+
+
+class CategoryPaymentsView(LoginRequiredMixin, ListView):
+    model = PaymentDocument
+    template_name = 'Payments/parent-category-history.html'
+    context_object_name = 'payments'
+
+    def get_queryset(self):
+        category_id = self.kwargs['category_id']
+        folder = get_object_or_404(Folder, Q(parent1=self.request.user) | Q(parent2=self.request.user))
+        return PaymentDocument.objects.filter(folder=folder, category_id=category_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = get_object_or_404(PaymentCategory, id=self.kwargs['category_id'])
+        context['category'] = category
+
+        folder = get_object_or_404(Folder, Q(parent1=self.request.user) | Q(parent2=self.request.user))
+        parent1_payments = PaymentDocument.objects.filter(folder=folder, category_id=self.kwargs['category_id'],
+                                                          user=folder.parent1)
+        parent2_payments = PaymentDocument.objects.filter(folder=folder, category_id=self.kwargs['category_id'],
+                                                          user=folder.parent2)
+
+        context['parent1_payments'] = parent1_payments
+        context['parent2_payments'] = parent2_payments
+        context['parent1_name'] = folder.parent1.get_full_name()
+        context['parent2_name'] = folder.parent2.get_full_name()
 
         return context
 
