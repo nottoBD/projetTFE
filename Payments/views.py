@@ -1,10 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Sum, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
+from django.utils.text import capfirst
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DeleteView
 
 from .forms import PaymentDocumentForm, FolderForm, PaymentDocumentFormLawyer
@@ -104,7 +108,6 @@ class PaymentHistoryView(LoginRequiredMixin, ListView):
         return context
 
 
-
 class CategoryPaymentsView(LoginRequiredMixin, ListView):
     model = PaymentDocument
     template_name = 'Payments/parent-category-history.html'
@@ -188,9 +191,10 @@ class FolderPaymentHistoryView(LoginRequiredMixin, ListView):
 
 @login_required
 # when parent add payments
+@transaction.atomic
 def submit_payment_document(request):
     user = request.user
-    folders = Folder.objects.filter(parent1=user) | Folder.objects.filter(parent2=user)
+    folders = Folder.objects.filter(Q(parent1=user) | Q(parent2=user))
 
     if not folders.exists():
         # Redirigez ou affichez un message si l'utilisateur n'a pas de dossier associé
@@ -198,29 +202,32 @@ def submit_payment_document(request):
 
     categories = PaymentCategory.objects.order_by('type_id', 'name')
 
-    # Créer un dictionnaire pour regrouper les catégories par type
     grouped_categories = {}
     for category in categories:
         if category.type not in grouped_categories:
             grouped_categories[category.type] = []
         grouped_categories[category.type].append(category)
 
-    # Déplacer la catégorie 'Autre' à la fin de sa liste respective
-    for categories_list in grouped_categories.values():
-        for category in categories_list:
-            if category.name == 'Autre':
-                categories_list.remove(category)
-                categories_list.append(category)
-                break
-
     if request.method == 'POST':
         form = PaymentDocumentForm(request.POST, request.FILES)
+        new_category_name = request.POST.get('new_category', '').strip()
+
         if form.is_valid():
             payment_document = form.save(commit=False)
             payment_document.user = user
             payment_document.folder = folders.first()
+            payment_document.status = 'pending'  # Nouveau paiement marqué comme en attente
+
+            if new_category_name:
+                other_type, created = CategoryType.objects.get_or_create(name='Autre')
+                new_category, created = PaymentCategory.objects.get_or_create(
+                    name=new_category_name,
+                    defaults={'type': other_type}
+                )
+                payment_document.category = new_category
+
             payment_document.save()
-            # Redirigez vers une page de succès
+            # Redirection vers une page de succès ou affichage d'un message
             return redirect('Payments:parent-payment-history')
     else:
         form = PaymentDocumentForm()
@@ -231,6 +238,7 @@ def submit_payment_document(request):
     }
 
     return render(request, 'Payments/submit_payment_document.html', context)
+
 
 # When lawyer add payment
 def submit_payment_document_lawyer(request, folder_id):
@@ -252,6 +260,44 @@ def submit_payment_document_lawyer(request, folder_id):
     else:
         form = PaymentDocumentFormLawyer(parent_choices=get_parent_choices(folder))
     return render(request, 'Payments/submit_payment_document_lawyer.html', {'form': form, 'folder': folder})
+
+
+@require_POST
+def add_category(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        new_category_name = request.POST.get('new_category_name')
+        new_category_description = request.POST.get('new_category_description')
+
+        if new_category_name:
+            # Capitalize the first letter of the category name
+            new_category_name = capfirst(new_category_name.strip())
+            new_category_description = capfirst(new_category_description.strip())
+
+            # Check if the category already exists
+            existing_category = PaymentCategory.objects.filter(name=new_category_name).exists()
+
+            if existing_category:
+                return JsonResponse({'success': False, 'error': 'Category already exists.'})
+
+            # Get or create the "Autre" category type
+            category_type_autre, created = CategoryType.objects.get_or_create(name="Autre")
+
+            # Create the new category
+            new_category = PaymentCategory.objects.create(
+                name=new_category_name,
+                description=new_category_description,
+                type=category_type_autre
+            )
+
+            return JsonResponse({
+                'success': True,
+                'category_id': new_category.pk,
+                'category_name': new_category.name,
+            })
+
+        return JsonResponse({'success': False, 'error': 'Category name is required.'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request.'})
 
 
 def get_parent_choices(folder):

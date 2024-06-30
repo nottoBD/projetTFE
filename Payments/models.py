@@ -21,18 +21,27 @@ class PaymentCategory(models.Model):
 
 
 class PaymentDocument(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),  # En attente de validation
+        ('validated', 'Validated'),  # Validé par l'avocat
+        ('rejected', 'Rejected'),  # Rejeté par l'avocat
+    )
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     folder = models.ForeignKey('Folder', on_delete=models.CASCADE, related_name='payment_documents', blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(default=timezone.now)
     category = models.ForeignKey(PaymentCategory, on_delete=models.CASCADE, related_name='payments', blank=False)
     document = models.FileField(upload_to='payment_documents/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f"Payment Document - {self.user.username} - {self.date} - {self.amount}"
 
     def user_can_delete(self, user):
         return self.user == user
+
+    def is_validated(self):
+        return self.status == 'validated'
 
 
 class Folder(models.Model):

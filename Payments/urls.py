@@ -4,11 +4,12 @@ from django.conf import settings
 
 from . import views
 from .views import PaymentHistoryView, MagistrateFolderListView, FolderPaymentHistoryView, \
-    submit_payment_document_lawyer, PaymentDeleteView, CategoryPaymentsView
+    submit_payment_document_lawyer, PaymentDeleteView, CategoryPaymentsView, add_category
 
 app_name = 'Payments'
 urlpatterns = [
     path('parent-add-payment/', views.submit_payment_document, name='parent-add-payment'),
+    path('add_category/', add_category, name='add_category'),
     path('parent-payment-history/', PaymentHistoryView.as_view(), name='parent-payment-history'),
     path('parent-payment-history/category/<int:category_id>/', CategoryPaymentsView.as_view(), name='category-payments'),
     path('create_folder/', views.create_folder, name='create_folder'),
