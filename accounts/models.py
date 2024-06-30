@@ -2,6 +2,7 @@ from django.contrib.auth.models import BaseUserManager, PermissionsMixin, Abstra
 from django.db import models
 from django.utils import timezone
 from guardian.shortcuts import assign_perm
+from datetime import timedelta
 
 from .validations import validate_image
 
@@ -32,11 +33,13 @@ class User(AbstractUser, PermissionsMixin):
         ('administrator', 'Administrator'),
         ('magistrate', 'Magistrate'),
         ('lawyer', 'Lawyer'),
+        ('judge', 'Judge'),
         ('parent', 'Parent'),
     ]
     username = models.CharField(max_length=150, unique=False, null=True, blank=True)
     email = models.EmailField(verbose_name='e-mail address', unique=True, max_length=255)
     is_active = models.BooleanField(default=True)
+    deletion_requested_at = models.DateTimeField(null=True, blank=True)
     role = models.CharField(max_length=13, choices=ROLE_CHOICES, default='parent')
     is_staff = models.BooleanField(default=False)
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female'), ('X', 'They')], null=True, blank=True, default=' ')
@@ -63,6 +66,9 @@ class User(AbstractUser, PermissionsMixin):
     def is_lawyer(self):
         return self.role == 'lawyer'
 
+    def is_judge(self):
+        return self.role == 'judge'
+
     @property
     def is_magistrate(self):
         return self.role == 'magistrate'
@@ -71,6 +77,16 @@ class User(AbstractUser, PermissionsMixin):
     def is_parent(self):
         return self.role == 'parent'
 
+    def request_deletion(self):
+        self.deletion_requested_at = timezone.now()
+        self.save()
+
+    def cancel_deletion(self):
+        self.deletion_requested_at = None
+        self.save()
+
+    def is_deletion_pending(self):
+        return self.deletion_requested_at and (timezone.now() < self.deletion_requested_at + timedelta(days=30))
 
 class MagistrateParent(models.Model):
     objects = None
