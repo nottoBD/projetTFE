@@ -71,6 +71,6 @@ def create_default_payment_categories(sender, **kwargs):
             for category_data in categories[type_id]:
                 PaymentCategory.objects.get_or_create(
                     name=category_data["name"],
-                    type_id=category_type,  # Utilisation de type_id au lieu de type
+                    type_id=category_type.id,  # .id pour régler TypeError
                     defaults={"description": category_data["description"]}
                 )
