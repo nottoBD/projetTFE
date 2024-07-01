@@ -117,9 +117,7 @@ class UserRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, label=_("First Name"))
     telephone = forms.CharField(max_length=16, required=False, label=_("Telephone"))
     address = forms.CharField(widget=forms.TextInput, required=False, label=_("Address"), max_length=70)
-    widgets = {
-        'date_of_birth': forms.DateInput(attrs={'type': 'date'})
-    }
+
 
     def clean_national_number(self):
         national_number = self.cleaned_data.get('national_number')
