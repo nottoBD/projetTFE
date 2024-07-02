@@ -1,14 +1,12 @@
 import re
-
 import magic
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 
-from .models import MagistrateParent
+from .models import AvocatParent, JugeParent
 
 User = get_user_model()
 
@@ -16,8 +14,7 @@ User = get_user_model()
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['last_name', 'first_name', 'email', 'date_of_birth', 'telephone', 'address', 'profile_image',
-                  'related_users']  # Excluez 'role' ici
+        fields = ['last_name', 'first_name', 'email', 'date_of_birth', 'telephone', 'address', 'profile_image', 'related_users']
 
     related_users = forms.ModelMultipleChoiceField(
         queryset=User.objects.none(),
@@ -31,33 +28,36 @@ class UserUpdateForm(forms.ModelForm):
 
         if target_user.role == 'parent':
             queryset = User.objects.filter(role='judge')
-            assigned = MagistrateParent.objects.filter(parent=target_user).values_list('judge__id', flat=True)
+            assigned = JugeParent.objects.filter(parent=target_user).values_list('juge_id', flat=True)
         elif target_user.role == 'judge':
             queryset = User.objects.filter(role='parent')
-            assigned = MagistrateParent.objects.filter(magistrate=target_user).values_list('parent__id', flat=True)
+            assigned = JugeParent.objects.filter(juge=target_user).values_list('parent_id', flat=True)
+        elif target_user.role == 'lawyer':
+            queryset = User.objects.filter(role='parent')
+            assigned = AvocatParent.objects.filter(avocat=target_user).values_list('parent_id', flat=True)
         else:
             queryset = User.objects.none()
             assigned = []
 
         self.fields['related_users'].queryset = queryset
         self.fields['related_users'].initial = assigned
-        self.fields['related_users'].label = _("Assigned judge" if target_user.role == 'parent' else "Assigned Parents")
+        self.fields['related_users'].label = _("Assigned Judge" if target_user.role == 'parent' else "Assigned Parents")
 
-        # Exclure le champ role si l'utilisateur n'est pas superutilisateur
         if not self.request_user.is_superuser:
             self.fields.pop('role', None)
 
     def clean_profile_image(self):
         profile_image = self.cleaned_data.get('profile_image')
 
-        if profile_image:  # Check if a new file is uploaded
+        if profile_image:
             valid_mime_types = ['image/jpeg', 'image/png', 'image/gif']
             file_mime_type = magic.from_buffer(profile_image.read(2048), mime=True)
-            profile_image.seek(0)  # reset file pointer to avoid bugs
+            profile_image.seek(0)
 
             if file_mime_type not in valid_mime_types:
                 raise ValidationError(_('Unsupported file type. Please upload a JPEG, PNG, or GIF image.'))
         return profile_image
+
 
 
 class MagistrateRegistrationForm(UserCreationForm):
@@ -90,14 +90,18 @@ class MagistrateRegistrationForm(UserCreationForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.telephone = self.cleaned_data['num_telephone']
-        user.is_staff = True  # Magistrates = staff
+        user.is_staff = True
         user.role = self.cleaned_data['role']
         if commit:
             user.save()
             self.save_m2m()
             assigned_parents = self.cleaned_data['parents_assigned']
-            for parent in assigned_parents:
-                MagistrateParent.objects.get_or_create(magistrate=user, parent=parent)
+            if user.role == 'lawyer':
+                for parent in assigned_parents:
+                    AvocatParent.objects.get_or_create(avocat=user, parent=parent)
+            elif user.role == 'judge':
+                for parent in assigned_parents:
+                    JugeParent.objects.get_or_create(juge=user, parent=parent)
         return user
 
 
@@ -117,7 +121,6 @@ class UserRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, label=_("First Name"))
     telephone = forms.CharField(max_length=16, required=False, label=_("Telephone"))
     address = forms.CharField(widget=forms.TextInput, required=False, label=_("Address"), max_length=70)
-
 
     def clean_national_number(self):
         national_number = self.cleaned_data.get('national_number')
