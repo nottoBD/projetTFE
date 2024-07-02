@@ -18,8 +18,7 @@
         <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h2 class="card-title">{% trans "Magistrates List" %}</h2>
-                    <!-- Magistrates table -->
+                    <h2 class="card-title">{% trans "Attorneys - Lawyers - Judges" %}</h2>
                     <table class="table">
                         <thead>
                         <tr>
@@ -42,6 +41,8 @@
                                 {% if magistrate.is_superuser %}Administrator
                                 {% elif magistrate.role == 'admin' %}Administrator
                                 {% elif magistrate.role == 'magistrate' %}Magistrate
+                                {% elif magistrate.role == 'lawyer' %}Lawyer
+                                {% elif magistrate.role == 'judge' %}Judge
                                 {% else %}Parent
                                 {% endif %}
                             </td>

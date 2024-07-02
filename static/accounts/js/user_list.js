@@ -1,6 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
-
+    const container = document.querySelector('.container-fluid');
     const isActiveCheckbox = document.getElementById('isActiveFilter');
+    let highlightedRowId = null;
+
+    if (!isActiveCheckbox) {
+        console.error('isActiveFilter checkbox not found!');
+        return;
+    }
+    if (!container) {
+        console.error('Container not found!');
+        return;
+    }
 
     function fetchUsers() {
         const isActive = isActiveCheckbox.checked;
@@ -10,62 +20,100 @@ document.addEventListener('DOMContentLoaded', function () {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
+                // console.log('Data fetched:', data);
                 const magistratesTab = document.querySelector('.magistrates-list');
                 const parentsTab = document.querySelector('.parents-list');
+
+                if (!magistratesTab || !parentsTab) {
+                    console.error('One or more table bodies not found!');
+                    return;
+                }
 
                 magistratesTab.innerHTML = '';
                 parentsTab.innerHTML = '';
 
-                //Magistrate
+                // Avocats...
                 data.magistrates.forEach(magistrate => {
                     const tr = document.createElement('tr');
-                    tr.setAttribute('data-user-id', magistrate.id); // ID
+                    tr.setAttribute('data-user-id', magistrate.id);
+                    tr.classList.add('magistrate-item');
                     tr.innerHTML = `<td><img src="${magistrate.profile_image_url}" alt="Profile Image" width="30" height="30" class="rounded-circle"></td><td>${magistrate.last_name}</td><td>${magistrate.first_name}</td><td>${magistrate.email}</td><td>${magistrate.role}</td><td>${magistrate.parents_count}</td>`;
                     magistratesTab.appendChild(tr);
                 });
 
-                //Parent
+                // Parents
                 data.parents.forEach(parent => {
                     const tr = document.createElement('tr');
-                    tr.setAttribute('data-user-id', parent.id); //ID
+                    tr.setAttribute('data-user-id', parent.id);
+                    tr.classList.add('parent-item');
                     tr.innerHTML = `<td><img src="${parent.profile_image_url}" alt="Profile Image" width="30" height="30" class="rounded-circle"></td><td>${parent.last_name}</td><td>${parent.first_name}</td><td>${parent.email}</td><td>${parent.magistrates_assigned.join('<br>')}</td>`;
                     parentsTab.appendChild(tr);
                 });
+
+                attachRowEventListeners();
+                reapplyHighlight(); //reapply highlight
             })
             .catch(error => console.error('Fetch error:', error));
     }
 
+    function attachRowEventListeners() {
+        // console.log('Attaching row event listeners');
+
+        document.querySelectorAll('tr[data-user-id]').forEach(row => {
+            row.addEventListener('click', function(event) {
+                // console.log('Click event detected');
+                clearTimeout(clickTimeout);
+                clickTimeout = setTimeout(function() {
+                    if (!event.ctrlKey) {
+                        document.querySelectorAll('tr[data-user-id]').forEach(r => {
+                            r.classList.remove('highlight');
+                        });
+                    }
+                    row.classList.toggle('highlight');
+                    highlightedRowId = row.classList.contains('highlight') ? row.getAttribute('data-user-id') : null;
+                    // console.log('Row highlighted:', row);
+                }, 200); //single clic
+            });
+
+            row.addEventListener('dblclick', function(event) {
+                // console.log('Double click event detected');
+                clearTimeout(clickTimeout);
+                let userId = row.getAttribute('data-user-id');
+                window.location.href = `/accounts/update/${userId}/`;
+            });
+        });
+    }
+
+    function reapplyHighlight() {
+        if (highlightedRowId) {
+            const rowToHighlight = document.querySelector(`tr[data-user-id='${highlightedRowId}']`);
+            if (rowToHighlight) {
+                rowToHighlight.classList.add('highlight');
+            }
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        if (!container.contains(event.target)) {
+            document.querySelectorAll('tr[data-user-id]').forEach(row => {
+                row.classList.remove('highlight');
+            });
+            highlightedRowId = null;
+        }
+    });
+
     let clickTimeout;
 
-    document.querySelector('.container-fluid').addEventListener('click', function(event) {
-        let targetRow = event.target.closest('tr[data-user-id]');
-        if (targetRow) {
-            clearTimeout(clickTimeout);
-            clickTimeout = setTimeout(function() {
-                if (!event.ctrlKey) {
-                    // highlight
-                    document.querySelectorAll('tr[data-user-id]').forEach(row => {
-                        row.classList.remove('highlight');
-                    });
-                }
-                targetRow.classList.toggle('highlight');
-            }, 200); //double click
-        }
-    });
 
-    document.querySelector('.container-fluid').addEventListener('dblclick', function(event) {
-        clearTimeout(clickTimeout);
-        let targetRow = event.target.closest('tr[data-user-id]');
-        if (targetRow) {
-            let userId = targetRow.getAttribute('data-user-id');
-            window.location.href = `/accounts/update/${userId}/`;
-        }
-    });
-
-    fetchUsers(); // initial
-    isActiveCheckbox.addEventListener('change', fetchUsers); // active filtering
+    fetchUsers();
+    isActiveCheckbox.addEventListener('change', fetchUsers);
 
     setInterval(fetchUsers, 10000);
 });
